@@ -1,0 +1,525 @@
+/* =========================================
+   SMARTFREIGHT DASHBOARD
+   ========================================= */
+
+.dashboard {
+    min-height: 100vh;
+    width: 100%;
+    background: #f8fafc;
+    color: #0f172a;
+
+    /* IMPORTANT:
+       Navbar and dashboard content should be
+       stacked vertically, not side by side. */
+    display: block;
+}
+
+
+/* =========================================
+   MAIN DASHBOARD
+   ========================================= */
+
+.dashboard-main {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 45px 40px;
+}
+
+
+/* =========================================
+   WELCOME
+   ========================================= */
+
+.welcome-section {
+    margin-bottom: 32px;
+}
+
+.welcome-section h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.welcome-section p {
+    margin: 8px 0 0;
+    font-size: 16px;
+    color: #64748b;
+}
+
+
+/* =========================================
+   STATISTICS
+   ========================================= */
+
+.stats-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 45px;
+}
+
+.stat-card {
+    background: #ffffff;
+
+    border: 1px solid #1f3044;
+    border-radius: 12px;
+
+    min-height: 80px;
+    padding: 25px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.stat-title {
+    font-size: 15px;
+    color: #64748b;
+}
+
+/* =========================================
+   ERROR MESSAGE
+   ========================================= */
+
+.error-message {
+    background: #fef2f2;
+
+    border: 1px solid #fecaca;
+
+    color: #b91c1c;
+
+    padding: 15px 18px;
+
+    border-radius: 10px;
+
+    margin-bottom: 25px;
+}
+
+.error-message strong {
+    display: block;
+}
+
+.error-message p {
+    margin: 5px 0 0;
+}
+
+
+/* =========================================
+   SHIPMENTS SECTION
+   ========================================= */
+
+.shipments-section {
+    width: 100%;
+}
+
+.shipments-header {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+.shipments-header h2 {
+    margin: 0;
+
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.shipments-header p {
+    margin: 6px 0 0;
+
+    color: #64748b;
+    font-size: 14px;
+}
+
+
+/* =========================================
+   POST SHIPMENT BUTTON
+   ========================================= */
+
+.post-btn,
+.empty-post-btn {
+    background: #2563eb;
+
+    color: #ffffff;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 12px 18px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.post-btn:hover,
+.empty-post-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   EMPTY STATE
+   ========================================= */
+
+.empty-state {
+    width: 95%;
+    min-height: 200px;
+
+    background: #7599c7;
+
+    border: 1px solid #3e526c;
+    border-radius: 14px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 25px;
+
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+
+.empty-icon {
+    width: 65px;
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 30px;
+
+    margin-bottom: 18px;
+}
+
+.empty-state h3 {
+    margin: 0;
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.empty-state p {
+    margin: 8px 0 22px;
+
+    color: #64748b;
+
+    font-size: 15px;
+}
+
+
+/* =========================================
+   SHIPMENT LIST
+   ========================================= */
+
+.shipment-list {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+/* =========================================
+   SHIPMENT CARD
+   ========================================= */
+
+.shipment-card {
+    width: 100%;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    padding: 22px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 30px;
+
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.shipment-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 7px 18px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================
+   SHIPMENT ROUTE
+   ========================================= */
+
+.shipment-route {
+    min-width: 280px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.shipment-route div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.location-label {
+    font-size: 10px;
+
+    color: #94a3b8;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+}
+
+.shipment-route strong {
+    font-size: 16px;
+}
+
+.route-arrow {
+    color: #2563eb;
+
+    font-size: 22px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================
+   SHIPMENT DETAILS
+   ========================================= */
+
+.shipment-details {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+
+    gap: 40px;
+}
+
+.shipment-details div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.shipment-details div > span:first-child {
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+.shipment-details strong {
+    font-size: 14px;
+}
+
+
+/* =========================================
+   STATUS
+   ========================================= */
+
+.shipment-status {
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px !important;
+
+    font-weight: 600;
+}
+
+.shipment-status.open {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.shipment-status.completed {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+
+/* =========================================
+   VIEW BUTTON
+   ========================================= */
+
+.view-btn {
+    background: transparent;
+
+    border: none;
+
+    color: #2563eb;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.view-btn:hover {
+    color: #1d4ed8;
+}
+
+
+/* =========================================
+   LOADING
+   ========================================= */
+
+.dashboard-loading {
+    min-height: 400px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #64748b;
+}
+
+.loading-spinner {
+    width: 36px;
+    height: 36px;
+
+    border: 4px solid #e2e8f0;
+
+    border-top-color: #2563eb;
+
+    border-radius: 50%;
+
+    animation: spin 0.8s linear infinite;
+
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .shipment-card {
+        flex-wrap: wrap;
+    }
+
+    .shipment-details {
+        width: 100%;
+        flex-basis: 100%;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .dashboard-main {
+        padding: 30px 18px;
+    }
+
+    .welcome-section h1 {
+        font-size: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .shipments-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .post-btn {
+        width: 100%;
+    }
+
+    .shipment-card {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .shipment-route {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+    .shipment-details {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+}

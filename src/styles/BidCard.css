@@ -1,0 +1,166 @@
+.bid-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 24px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    margin-bottom: 12px;
+
+    transition: 0.2s ease;
+}
+
+.bid-card:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+
+.bid-card-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+.transporter-avatar {
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.transporter-info h3 {
+    margin: 0 0 5px;
+
+    color: #0f172a;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+.transporter-info p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+.bid-card-right {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+}
+
+
+.bid-price-section {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 5px;
+}
+
+
+.bid-amount {
+    color: #0f172a;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.bid-status {
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+
+.bid-status.pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+
+.bid-status.accepted {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+
+.bid-status.rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+
+.accept-bid-btn {
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #2563eb;
+    color: white;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.accept-bid-btn:hover {
+    background: #1d4ed8;
+}
+
+
+@media (max-width: 650px) {
+
+    .bid-card {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 18px;
+    }
+
+    .bid-card-right {
+        justify-content: space-between;
+    }
+
+}
