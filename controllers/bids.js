@@ -1,11 +1,19 @@
 const pool = require('../db/connection')
 
+
+// ========================================
+// GET ALL BIDS FOR A SHIPMENT
+// ========================================
+
 const getBids = async (req, res) => {
+
     try {
+
         const { shipmentId } = req.params
 
         const result = await pool.query(
-            `SELECT
+            `
+            SELECT
                 b.*,
                 u.name AS transporter_name,
                 u.rating,
@@ -14,11 +22,12 @@ const getBids = async (req, res) => {
                 u.truck_type,
                 u.truck_capacity_kg,
                 u.truck_number
-             FROM bids b
-             JOIN users u
+            FROM bids b
+            JOIN users u
                 ON b.transporter_id = u.id
-             WHERE b.shipment_id = $1
-             ORDER BY b.amount ASC`,
+            WHERE b.shipment_id = $1
+            ORDER BY b.amount ASC
+            `,
             [shipmentId]
         )
 
@@ -26,127 +35,673 @@ const getBids = async (req, res) => {
 
     } catch (err) {
 
-        console.error('Get bids error:', err)
+        console.error(
+            'Get bids error:',
+            err
+        )
 
         res.status(500).json({
-            error: err.message
+            error:
+                err.message ||
+                'Failed to get bids'
+        })
+    }
+}
+
+
+// ========================================
+// GET DASHBOARD BID COUNT
+// ========================================
+
+const getDashboardBidCount = async (req, res) => {
+
+    try {
+
+        // ==================================
+        // CHECK USER
+        // ==================================
+
+        if (!req.user || !req.user.id) {
+
+            return res.status(401).json({
+                error: 'Authentication required'
+            })
+
+        }
+
+
+        let result
+
+
+        // ==================================
+        // SHIPPER
+        // ==================================
+
+        /*
+            For a SHIPPER:
+
+            Count all bids received on
+            shipments belonging to this shipper.
+        */
+
+        if (req.user.role === 'shipper') {
+
+            result = await pool.query(
+                `
+                SELECT COUNT(*) AS count
+                FROM bids b
+                JOIN shipments s
+                    ON b.shipment_id = s.id
+                WHERE s.user_id = $1
+                `,
+                [req.user.id]
+            )
+
+        }
+
+
+        // ==================================
+        // TRANSPORTER
+        // ==================================
+
+        /*
+            For a TRANSPORTER:
+
+            Count all bids placed by
+            this transporter.
+        */
+
+        else if (req.user.role === 'transporter') {
+
+            result = await pool.query(
+                `
+                SELECT COUNT(*) AS count
+                FROM bids
+                WHERE transporter_id = $1
+                `,
+                [req.user.id]
+            )
+
+        }
+
+
+        // ==================================
+        // UNKNOWN ROLE
+        // ==================================
+
+        else {
+
+            return res.status(400).json({
+                error: 'Invalid user role'
+            })
+
+        }
+
+
+        // ==================================
+        // RESPONSE
+        // ==================================
+
+        return res.json({
+
+            count:
+                Number(
+                    result.rows[0].count
+                )
+
+        })
+
+    } catch (err) {
+
+        console.error(
+            'Dashboard bid count error:',
+            err
+        )
+
+        return res.status(500).json({
+
+            error:
+                err.message ||
+                'Failed to get bid count'
+
         })
 
     }
 }
+
+
+// ========================================
+// PLACE BID
+// ========================================
+
 const placeBid = async (req, res) => {
+
     try {
-        const { shipment_id, amount, note } = req.body
 
-        if (!shipment_id || !amount) {
-            return res.status(400).json({
-                error: 'Shipment id and amount are required'
+        if (!req.user || !req.user.id) {
+
+            return res.status(401).json({
+                error: 'Authentication required'
             })
+
         }
 
-        const shipment = await pool.query(
-            'SELECT * FROM shipments WHERE id = $1',
-            [shipment_id]
-        )
 
-        if (shipment.rows.length === 0) {
-            return res.status(404).json({ error: 'Shipment not found' })
-        }
+        const {
+            shipment_id,
+            amount,
+            note
+        } = req.body
 
-        if (shipment.rows[0].status !== 'posted') {
+
+        // ==================================
+        // VALIDATE INPUT
+        // ==================================
+
+        if (
+            !shipment_id ||
+            !amount
+        ) {
+
             return res.status(400).json({
-                error: 'This shipment is no longer accepting bids'
+                error:
+                    'Shipment id and amount are required'
             })
+
         }
 
-        const existingBid = await pool.query(
-            'SELECT * FROM bids WHERE shipment_id = $1 AND transporter_id = $2',
-            [shipment_id, req.user.id]
-        )
 
-        if (existingBid.rows.length > 0) {
+        const bidAmount =
+            Number(amount)
+
+
+        if (
+            !Number.isFinite(bidAmount) ||
+            bidAmount <= 0
+        ) {
+
             return res.status(400).json({
-                error: 'You have already placed a bid on this shipment'
+                error:
+                    'Bid amount must be a valid positive number'
             })
+
         }
 
-        // get transporter name for socket broadcast
-        const transporter = await pool.query(
-            'SELECT name FROM users WHERE id = $1',
-            [req.user.id]
-        )
 
-        const result = await pool.query(
-            `INSERT INTO bids (shipment_id, transporter_id, amount, note)
-             VALUES ($1, $2, $3, $4)
-             RETURNING *`,
-            [shipment_id, req.user.id, amount, note]
-        )
+        // ==================================
+        // CHECK SHIPMENT
+        // ==================================
+
+        const shipment =
+            await pool.query(
+                `
+                SELECT *
+                FROM shipments
+                WHERE id = $1
+                `,
+                [shipment_id]
+            )
+
+
+        if (
+            shipment.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                error:
+                    'Shipment not found'
+            })
+
+        }
+
+
+        const shipmentData =
+            shipment.rows[0]
+
+
+        // ==================================
+        // CHECK STATUS
+        // ==================================
+
+        if (
+            shipmentData.status !== 'posted'
+        ) {
+
+            return res.status(400).json({
+                error:
+                    'This shipment is no longer accepting bids'
+            })
+
+        }
+
+
+        // ==================================
+        // CHECK USER IS NOT SHIPPER
+        // ==================================
+
+        if (
+            String(shipmentData.user_id) ===
+            String(req.user.id)
+        ) {
+
+            return res.status(403).json({
+                error:
+                    'You cannot place a bid on your own shipment'
+            })
+
+        }
+
+
+        // ==================================
+        // CHECK EXISTING BID
+        // ==================================
+
+        const existingBid =
+            await pool.query(
+                `
+                SELECT *
+                FROM bids
+                WHERE shipment_id = $1
+                  AND transporter_id = $2
+                `,
+                [
+                    shipment_id,
+                    req.user.id
+                ]
+            )
+
+
+        if (
+            existingBid.rows.length > 0
+        ) {
+
+            return res.status(400).json({
+                error:
+                    'You have already placed a bid on this shipment'
+            })
+
+        }
+
+
+        // ==================================
+        // GET TRANSPORTER
+        // ==================================
+
+        const transporter =
+            await pool.query(
+                `
+                SELECT
+                    id,
+                    name
+                FROM users
+                WHERE id = $1
+                `,
+                [req.user.id]
+            )
+
+
+        if (
+            transporter.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                error:
+                    'Transporter account not found'
+            })
+
+        }
+
+
+        const transporterData =
+            transporter.rows[0]
+
+
+        // ==================================
+        // INSERT BID
+        // ==================================
+
+        const result =
+            await pool.query(
+                `
+                INSERT INTO bids
+                    (
+                        shipment_id,
+                        transporter_id,
+                        amount,
+                        note
+                    )
+                VALUES
+                    (
+                        $1,
+                        $2,
+                        $3,
+                        $4
+                    )
+                RETURNING *
+                `,
+                [
+                    shipment_id,
+                    req.user.id,
+                    bidAmount,
+                    note || null
+                ]
+            )
+
+
+        // ==================================
+        // NEW BID RESPONSE
+        // ==================================
 
         const newBid = {
+
             ...result.rows[0],
-            transporter_name: transporter.rows[0].name
+
+            transporter_name:
+                transporterData.name
+
         }
 
-        // emit new bid to everyone watching this shipment
-        const io = req.app.get('io')
-        io.to(shipment_id).emit('new-bid', newBid)
 
-        res.status(201).json(newBid)
+        // ==================================
+        // SOCKET.IO
+        // ==================================
+
+        const io =
+            req.app.get('io')
+
+
+        if (io) {
+
+            io.to(
+                String(shipment_id)
+            ).emit(
+                'new-bid',
+                newBid
+            )
+
+        } else {
+
+            console.warn(
+                '⚠️ Socket.IO instance not available.'
+            )
+
+        }
+
+
+        // ==================================
+        // RESPONSE
+        // ==================================
+
+        return res.status(201).json(
+            newBid
+        )
+
     } catch (err) {
-        res.status(500).json({ error: err.message })
+
+        console.error(
+            'Place bid error:',
+            err
+        )
+
+        return res.status(500).json({
+            error:
+                err.message ||
+                'Failed to place bid'
+        })
+
     }
 }
 
-const acceptBid = async (req, res) => {
-    try {
-        const { id } = req.params
 
-        const bid = await pool.query(
-            'SELECT * FROM bids WHERE id = $1',
+// ========================================
+// ACCEPT BID
+// ========================================
+
+const acceptBid = async (req, res) => {
+
+    try {
+
+        if (
+            !req.user ||
+            !req.user.id
+        ) {
+
+            return res.status(401).json({
+                error:
+                    'Authentication required'
+            })
+
+        }
+
+
+        const { id } =
+            req.params
+
+
+        // ==================================
+        // GET BID
+        // ==================================
+
+        const bid =
+            await pool.query(
+                `
+                SELECT *
+                FROM bids
+                WHERE id = $1
+                `,
+                [id]
+            )
+
+
+        if (
+            bid.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                error:
+                    'Bid not found'
+            })
+
+        }
+
+
+        const bidData =
+            bid.rows[0]
+
+
+        // ==================================
+        // GET SHIPMENT
+        // ==================================
+
+        const shipment =
+            await pool.query(
+                `
+                SELECT *
+                FROM shipments
+                WHERE id = $1
+                `,
+                [
+                    bidData.shipment_id
+                ]
+            )
+
+
+        if (
+            shipment.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                error:
+                    'Shipment not found'
+            })
+
+        }
+
+
+        const shipmentData =
+            shipment.rows[0]
+
+
+        // ==================================
+        // CHECK OWNERSHIP
+        // ==================================
+
+        if (
+            String(shipmentData.user_id) !==
+            String(req.user.id)
+        ) {
+
+            return res.status(403).json({
+                error:
+                    'You can only accept bids on your own shipments'
+            })
+
+        }
+
+
+        // ==================================
+        // CHECK STATUS
+        // ==================================
+
+        if (
+            shipmentData.status !== 'posted'
+        ) {
+
+            return res.status(400).json({
+                error:
+                    'This shipment is no longer accepting bids'
+            })
+
+        }
+
+
+        // ==================================
+        // ACCEPT BID
+        // ==================================
+
+        await pool.query(
+            `
+            UPDATE bids
+            SET status = 'accepted'
+            WHERE id = $1
+            `,
             [id]
         )
 
-        if (bid.rows.length === 0) {
-            return res.status(404).json({ error: 'Bid not found' })
+
+        // ==================================
+        // REJECT OTHER BIDS
+        // ==================================
+
+        await pool.query(
+            `
+            UPDATE bids
+            SET status = 'rejected'
+            WHERE shipment_id = $1
+              AND id != $2
+            `,
+            [
+                bidData.shipment_id,
+                id
+            ]
+        )
+
+
+        // ==================================
+        // ASSIGN TRANSPORTER
+        // ==================================
+
+        await pool.query(
+            `
+            UPDATE shipments
+            SET
+                status = 'assigned',
+                transporter_id = $1
+            WHERE id = $2
+            `,
+            [
+                bidData.transporter_id,
+                bidData.shipment_id
+            ]
+        )
+
+
+        // ==================================
+        // SOCKET.IO
+        // ==================================
+
+        const io =
+            req.app.get('io')
+
+
+        if (io) {
+
+            io.to(
+                String(
+                    bidData.shipment_id
+                )
+            ).emit(
+                'bid-accepted',
+                {
+                    bidId: id
+                }
+            )
+
         }
 
-        const shipment = await pool.query(
-            'SELECT * FROM shipments WHERE id = $1',
-            [bid.rows[0].shipment_id]
-        )
 
-        if (shipment.rows[0].user_id !== req.user.id) {
-            return res.status(403).json({
-                error: 'You can only accept bids on your own shipments'
-            })
-        }
+        // ==================================
+        // RESPONSE
+        // ==================================
 
-        await pool.query(
-            'UPDATE bids SET status = $1 WHERE id = $2',
-            ['accepted', id]
-        )
+        return res.json({
 
-        await pool.query(
-            `UPDATE bids SET status = 'rejected'
-             WHERE shipment_id = $1 AND id != $2`,
-            [bid.rows[0].shipment_id, id]
-        )
+            message:
+                'Bid accepted successfully',
 
-        await pool.query(
-            `UPDATE shipments SET status = 'assigned',
-             transporter_id = $1 WHERE id = $2`,
-            [bid.rows[0].transporter_id, bid.rows[0].shipment_id]
-        )
+            bidId:
+                id,
 
-        // emit bid accepted to everyone in room
-        const io = req.app.get('io')
-        io.to(bid.rows[0].shipment_id).emit('bid-accepted', { bidId: id })
+            shipmentId:
+                bidData.shipment_id,
 
-        res.json({ message: 'Bid accepted successfully' })
+            transporterId:
+                bidData.transporter_id
+
+        })
+
     } catch (err) {
-        res.status(500).json({ error: err.message })
+
+        console.error(
+            'Accept bid error:',
+            err
+        )
+
+        return res.status(500).json({
+
+            error:
+                err.message ||
+                'Failed to place bid'
+
+        })
+
     }
+
 }
 
-module.exports = { getBids, placeBid, acceptBid }
+
+// ========================================
+// EXPORT
+// ========================================
+
+module.exports = {
+
+    getBids,
+
+    getDashboardBidCount,
+
+    placeBid,
+
+    acceptBid
+
+}
