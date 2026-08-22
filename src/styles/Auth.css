@@ -1,0 +1,428 @@
+/* =====================================================
+   AUTH PAGE
+===================================================== */
+
+.auth-page {
+    min-height: calc(100vh - 105px);
+
+    display: flex;
+
+    justify-content: center;
+
+    /* Start near the top instead of vertically centering */
+    align-items: flex-start;
+
+    /* Reduced top space */
+    padding: 20px 20px 50px;
+
+    box-sizing: border-box;
+
+    background: #f3f5f3;
+}
+
+
+/* =====================================================
+   AUTH BOX
+===================================================== */
+
+.auth-box {
+    width: 100%;
+
+    max-width: 600px;
+
+    background: #f9faf9;
+
+    border: 1px solid #dfe4df;
+
+    border-radius: 18px;
+
+    /* Slightly reduced padding */
+    padding: 42px 50px;
+
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+.auth-box h1 {
+    font-size: 44px;
+
+    line-height: 1.08;
+
+    margin: 8px 0 25px;
+
+    letter-spacing: -1.5px;
+
+    font-weight: 600;
+}
+
+.auth-box h1 span {
+    color: #527153;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.auth-box form {
+    display: flex;
+
+    flex-direction: column;
+
+    /* More breathing space */
+    gap: 10px;
+}
+
+
+/* =====================================================
+   LABEL
+===================================================== */
+
+.auth-box label {
+    display: block;
+
+    /* Less bold */
+    font-weight: 500;
+
+    margin-top: 7px;
+
+    margin-bottom: 5px;
+
+    color: #303631;
+
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+.auth-box input,
+.auth-box select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px 15px;
+
+    border: 1px solid #d4dad5;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+
+    font-weight: 400;
+
+    outline: none;
+
+    background: white;
+
+    color: #252a26;
+
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+
+/* Input focus */
+
+.auth-box input:focus,
+.auth-box select:focus {
+    border-color: #527153;
+
+    box-shadow: 0 0 0 2px rgba(82, 113, 83, 0.08);
+}
+
+
+/* Placeholder */
+
+.auth-box input::placeholder {
+    color: #a5aaa6;
+
+    font-weight: 400;
+}
+
+
+/* =====================================================
+   LOGIN / CREATE ACCOUNT BUTTON
+===================================================== */
+
+.auth-box form > button {
+    margin-top: 18px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #4f704f;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.auth-box form > button:hover {
+    background: #405f42;
+}
+
+.auth-box form > button:disabled {
+    background: #aab5ab;
+
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   REGISTER / LOGIN SWITCH
+===================================================== */
+
+.auth-switch {
+    text-align: center;
+
+    margin-top: 25px;
+
+    color: #5b625d;
+
+    font-size: 15px;
+}
+
+.auth-switch a {
+    margin-left: 6px;
+
+    color: #4f704f;
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+/* =====================================================
+   ROLE SELECTION
+===================================================== */
+
+.role-selection {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 15px;
+}
+
+
+.role-selection button {
+    min-height: 115px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 6px;
+
+    border: 1px solid #d5dbd6;
+
+    border-radius: 12px;
+
+    background: white;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.role-selection button:hover {
+    border-color: #527153;
+}
+
+
+.role-selection button.selected {
+    border: 2px solid #527153;
+
+    background: #edf3ed;
+}
+
+
+.role-selection button:first-child {
+    font-size: 28px;
+}
+
+
+.role-selection strong {
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+
+.role-selection small {
+    color: #687069;
+
+    font-size: 12px;
+
+    font-weight: 400;
+}
+
+
+/* =====================================================
+   TRUCK DETAILS
+===================================================== */
+
+/*
+   If your Register.jsx has a truck-details class,
+   this will style that section.
+*/
+
+.truck-details {
+    margin-top: 8px;
+
+    padding: 18px;
+
+    background: #f5f8f5;
+
+    border: 1px solid #dfe5df;
+
+    border-radius: 12px;
+}
+
+
+/* Truck Details heading */
+
+.truck-details h3,
+.truck-details h4 {
+    margin: 0 0 5px;
+
+    color: #303631;
+
+    font-size: 17px;
+
+    font-weight: 600;
+}
+
+
+/* Truck Details description */
+
+.truck-details p {
+    margin: 0 0 15px;
+
+    color: #687069;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    font-weight: 400;
+}
+
+
+/* Space between truck fields */
+
+.truck-details label {
+    margin-top: 10px;
+
+    margin-bottom: 5px;
+
+    font-size: 14px;
+
+    font-weight: 500;
+}
+
+
+/* =====================================================
+   TRUCK WARNING
+===================================================== */
+
+.truck-warning {
+    margin-top: 5px;
+
+    padding: 10px 12px;
+
+    background: #faf8ed;
+
+    border: 1px solid #e7dfbd;
+
+    border-radius: 8px;
+
+    color: #756b42;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    font-weight: 400;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 550px) {
+
+    .auth-page {
+        padding: 15px 12px 40px;
+
+        align-items: flex-start;
+    }
+
+
+    .auth-box {
+        padding: 32px 24px;
+
+        border-radius: 15px;
+    }
+
+
+    .auth-box h1 {
+        font-size: 38px;
+
+        margin-bottom: 22px;
+    }
+
+
+    .auth-box form {
+        gap: 8px;
+    }
+
+
+    .auth-box label {
+        font-size: 14px;
+    }
+
+
+    .role-selection {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+
+    .role-selection button {
+        min-height: 100px;
+    }
+
+
+    .truck-details {
+        padding: 15px;
+    }
+}

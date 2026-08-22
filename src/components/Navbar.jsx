@@ -1,51 +1,96 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "../styles/Navbar.css";
 
 const Navbar = () => {
-    const navigate = useNavigate()
-    const user = JSON.parse(localStorage.getItem('user'))
 
-    const handleLogout = () => {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        navigate('/')
-    }
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    return (
-        <nav style={{
-            background: '#1e293b',
-            padding: '0 24px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            height: '60px'
-        }}>
-            <h2
-                style={{ color: 'white', margin: 0, cursor: 'pointer' }}
-                onClick={() => navigate('/dashboard')}
-            >
-                SmartFreight
-            </h2>
+  // Check if user is logged in
+  const isLoggedIn = !!localStorage.getItem("token");
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span style={{ color: '#94a3b8' }}>
-                    {user?.name} ({user?.role})
-                </span>
-                <button
-                    onClick={handleLogout}
-                    style={{
-                        background: 'transparent',
-                        color: '#94a3b8',
-                        border: '1px solid #94a3b8',
-                        padding: '6px 16px',
-                        borderRadius: '6px',
-                        cursor: 'pointer'
-                    }}
-                >
-                    Logout
-                </button>
-            </div>
-        </nav>
-    )
-}
+  // Logout function
+  const handleLogout = () => {
 
-export default Navbar
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
+  return (
+    <nav className="navbar">
+
+      {/* LOGO */}
+      <Link to="/" className="logo">
+
+        <span className="logo-symbol">»</span>
+
+        <span>
+          SMART<span>FREIGHT</span>
+        </span>
+
+      </Link>
+
+
+      {/* NAVIGATION */}
+      <div className="nav-links">
+
+        <Link
+          to="/"
+          className={location.pathname === "/" ? "active" : ""}
+        >
+          Home
+        </Link>
+
+        <Link
+          to="/about"
+          className={location.pathname === "/about" ? "active" : ""}
+        >
+          About Us
+        </Link>
+
+        <Link
+          to="/contact"
+          className={location.pathname === "/contact" ? "active" : ""}
+        >
+          Contact Us
+        </Link>
+
+        <Link
+          to="/learn-more"
+          className={location.pathname === "/learn-more" ? "active" : ""}
+        >
+          Learn More
+        </Link>
+
+      </div>
+
+
+      {/* JOIN / LOGOUT BUTTON */}
+
+      {isLoggedIn ? (
+
+        <button
+          className="join-nav-btn"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+
+      ) : (
+
+        <Link
+          to="/login"
+          className="join-nav-btn"
+        >
+          Join Us
+        </Link>
+
+      )}
+
+    </nav>
+  );
+};
+
+export default Navbar;

@@ -1,0 +1,96 @@
+.learn-page {
+  min-height: calc(100vh - 105px);
+
+  padding: 80px 7%;
+
+  background: #f3f5f3;
+}
+
+.page-label {
+  color: #4f704f;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+.learn-page h1 {
+  font-size: 65px;
+
+  line-height: 1.05;
+
+  margin: 20px 0;
+}
+
+.learn-page h1 span {
+  color: #527153;
+}
+
+.learn-intro {
+  max-width: 650px;
+
+  color: #555c57;
+
+  font-size: 18px;
+
+  line-height: 1.7;
+
+  margin-bottom: 60px;
+}
+
+.feature-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 25px;
+}
+
+.feature-card {
+  background: #f9faf9;
+
+  border: 1px solid #dfe4df;
+
+  border-radius: 15px;
+
+  padding: 35px;
+
+  min-height: 220px;
+
+  transition: 0.25s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+
+  border-color: #527153;
+}
+
+.feature-number {
+  color: #527153;
+
+  font-weight: 700;
+
+  margin-bottom: 30px;
+}
+
+.feature-card h2 {
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  color: #5a615c;
+
+  line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+
+  .learn-page h1 {
+    font-size: 45px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}

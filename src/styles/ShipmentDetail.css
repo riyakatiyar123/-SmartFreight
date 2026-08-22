@@ -1,10 +1,39 @@
 /* =========================================
-   SHIPMENT DETAIL PAGE
+   SMARTFREIGHT — SHIPMENT DETAIL PAGE
 ========================================= */
+.shipment-extra-info {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 
+    margin-top: 20px;
+}
+
+.extra-info-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.extra-info-item h3 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #202521;
+}
+
+.extra-info-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.4;
+}
 .shipment-detail-page {
     min-height: 100vh;
-    background: #f8fafc;
+    background: #f3f5f3;
+    color: #202521;
+    font-family: inherit;
 }
 
 
@@ -32,7 +61,7 @@
     border: none;
     background: none;
 
-    color: #2563eb;
+    color: #4f704f;
 
     font-size: 15px;
     font-weight: 600;
@@ -40,12 +69,13 @@
     cursor: pointer;
 
     padding: 0;
-
     margin-bottom: 32px;
+
+    transition: color 0.2s ease;
 }
 
 .back-btn:hover {
-    color: #1d4ed8;
+    color: #405d42;
 }
 
 
@@ -65,29 +95,31 @@
 .detail-label {
     margin: 0 0 8px;
 
-    color: #94a3b8;
+    color: #8a958d;
 
-    font-size: 13px;
-
+    font-size: 12px;
     font-weight: 700;
 
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
 }
 
 .detail-header h1 {
     margin: 0;
 
-    color: #0f172a;
+    color: #202521;
 
     font-size: 38px;
-
     font-weight: 700;
+
+    line-height: 1.15;
 }
 
 .header-arrow {
-    color: #2563eb;
+    color: #4f704f;
 
     margin: 0 14px;
+
+    font-weight: 600;
 }
 
 
@@ -100,36 +132,57 @@
 
     border-radius: 30px;
 
-    font-size: 13px;
-
+    font-size: 12px;
     font-weight: 700;
 
     text-transform: uppercase;
+
+    border: 1px solid transparent;
 }
+
+
+/* POSTED */
 
 .status-posted {
-    background: #dcfce7;
-    color: #15803d;
+    background: #e5f0e5;
+    color: #405d42;
+    border-color: #b8d4b9;
 }
+
+
+/* ASSIGNED */
 
 .status-assigned {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: #f5efd9;
+    color: #8a6d22;
+    border-color: #e5d8a8;
 }
+
+
+/* IN TRANSIT */
 
 .status-in_transit {
-    background: #fef3c7;
-    color: #b45309;
+    background: #e5f0e5;
+    color: #405d42;
+    border-color: #b8d4b9;
 }
 
+
+/* DELIVERED */
+
 .status-delivered {
-    background: #e5e7eb;
-    color: #374151;
+    background: #d9ead9;
+    color: #35613a;
+    border-color: #b8d4b9;
 }
+
+
+/* CANCELLED */
 
 .status-cancelled {
     background: #fee2e2;
     color: #b91c1c;
+    border-color: #fecaca;
 }
 
 
@@ -138,9 +191,9 @@
 ========================================= */
 
 .shipment-info-card {
-    background: white;
+    background: #ffffff;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid #dfe4df;
 
     border-radius: 16px;
 
@@ -149,12 +202,16 @@
     margin-bottom: 38px;
 
     box-shadow:
-        0 4px 15px rgba(15, 23, 42, 0.04);
+        0 4px 15px rgba(64, 93, 66, 0.05);
 }
 
 
 /* =========================================
-   ROUTE
+   ROUTE CARD
+   NOTE:
+   This is the SECOND route display.
+   Remove this JSX section if you want
+   Delhi → Tamil Nadu to appear only once.
 ========================================= */
 
 .route-card {
@@ -166,7 +223,7 @@
 
     padding-bottom: 28px;
 
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #dfe4df;
 
     margin-bottom: 25px;
 }
@@ -180,9 +237,9 @@
 }
 
 .location span {
-    color: #94a3b8;
+    color: #8a958d;
 
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 700;
 
@@ -190,15 +247,19 @@
 }
 
 .location strong {
-    color: #0f172a;
+    color: #202521;
 
     font-size: 23px;
+
+    font-weight: 600;
 }
 
 .route-arrow {
-    color: #2563eb;
+    color: #4f704f;
 
     font-size: 30px;
+
+    font-weight: 600;
 }
 
 
@@ -209,8 +270,7 @@
 .shipment-info-grid {
     display: grid;
 
-    grid-template-columns:
-        repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
 
     gap: 18px;
 
@@ -218,9 +278,9 @@
 }
 
 .info-box {
-    background: #f8fafc;
+    background: #f6f8f6;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid #dfe4df;
 
     border-radius: 10px;
 
@@ -232,15 +292,16 @@
 
     margin-bottom: 7px;
 
-    color: #64748b;
+    color: #647069;
 
     font-size: 13px;
 }
 
 .info-box strong {
-    color: #0f172a;
+    color: #202521;
 
     font-size: 19px;
+    font-weight: 600;
 }
 
 
@@ -249,31 +310,28 @@
 ========================================= */
 
 .notes-box {
-    padding: 17px 19px;
-
-    background: #fffbeb;
-
-    border: 1px solid #fde68a;
-
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 8px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .notes-box h3 {
-    margin: 0 0 7px;
-
-    color: #0f172a;
-
-    font-size: 14px;
+    margin: 0;
+    font-size: 15px;
+    min-width: 180px;
 }
 
 .notes-box p {
     margin: 0;
-
     color: #64748b;
-
     font-size: 14px;
 }
-
 
 /* =========================================
    SECTION TITLE
@@ -283,7 +341,6 @@
     display: flex;
 
     justify-content: space-between;
-
     align-items: center;
 
     margin-bottom: 18px;
@@ -292,15 +349,16 @@
 .section-title h2 {
     margin: 0;
 
-    color: #0f172a;
+    color: #202521;
 
     font-size: 25px;
+    font-weight: 700;
 }
 
 .section-title p {
     margin: 6px 0 0;
 
-    color: #64748b;
+    color: #647069;
 
     font-size: 14px;
 }
@@ -321,13 +379,14 @@
 
     margin-left: 9px;
 
-    background: #eff6ff;
+    background: #e5f0e5;
 
-    color: #2563eb;
+    color: #405d42;
 
     border-radius: 50%;
 
     font-size: 12px;
+    font-weight: 700;
 
     vertical-align: middle;
 }
@@ -346,12 +405,13 @@
 
     border-radius: 20px;
 
-    background: #fef3c7;
+    background: #e5f0e5;
 
-    color: #b45309;
+    color: #405d42;
+
+    border: 1px solid #b8d4b9;
 
     font-size: 12px;
-
     font-weight: 700;
 }
 
@@ -379,14 +439,13 @@
     flex-direction: column;
 
     align-items: center;
-
     justify-content: center;
 
     min-height: 180px;
 
-    background: white;
+    background: #ffffff;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid #dfe4df;
 
     border-radius: 14px;
 
@@ -402,7 +461,7 @@
 .no-bids h3 {
     margin: 0 0 6px;
 
-    color: #0f172a;
+    color: #202521;
 
     font-size: 18px;
 }
@@ -410,7 +469,7 @@
 .no-bids p {
     margin: 0;
 
-    color: #64748b;
+    color: #647069;
 
     font-size: 14px;
 }
@@ -421,9 +480,9 @@
 ========================================= */
 
 .place-bid-card {
-    background: white;
+    background: #ffffff;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid #dfe4df;
 
     border-radius: 14px;
 
@@ -443,15 +502,14 @@
 }
 
 .form-group label {
-    color: #334155;
+    color: #334037;
 
     font-size: 14px;
-
     font-weight: 600;
 }
 
 .form-group label span {
-    color: #94a3b8;
+    color: #8a958d;
 
     font-weight: 400;
 }
@@ -464,23 +522,30 @@
 
     padding: 12px 14px;
 
-    border: 1px solid #cbd5e1;
+    border: 1px solid #cfd8d0;
 
     border-radius: 8px;
 
     font-family: inherit;
-
     font-size: 14px;
 
     outline: none;
+
+    color: #202521;
+
+    background: #ffffff;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-    border-color: #2563eb;
+    border-color: #4f704f;
 
     box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.1);
+        0 0 0 3px rgba(79, 112, 79, 0.10);
 }
 
 .form-group textarea {
@@ -501,25 +566,32 @@
 
     border-radius: 8px;
 
-    background: #2563eb;
+    background: #4f704f;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 15px;
-
     font-weight: 600;
 
     cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .place-bid-btn:hover {
-    background: #1d4ed8;
+    background: #405d42;
+
+    transform: translateY(-1px);
 }
 
 .place-bid-btn:disabled {
-    background: #94a3b8;
+    background: #aab7ab;
 
     cursor: not-allowed;
+
+    transform: none;
 }
 
 
@@ -568,7 +640,6 @@
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 10px;
@@ -600,9 +671,11 @@
 ========================================= */
 
 .tracking-card {
-    background: white;
+    position: relative;
 
-    border: 1px solid #e2e8f0;
+    background: #ffffff;
+
+    border: 1px solid #dfe4df;
 
     border-radius: 14px;
 
@@ -612,24 +685,78 @@
 }
 
 .location-controls {
+    position: relative;
+
+    z-index: 1000;
+
     margin-bottom: 20px;
+
+    pointer-events: auto;
 }
 
+
+/* =========================================
+   START LOCATION BUTTON
+========================================= */
+
 .start-location-btn {
-    padding: 11px 18px;
+    position: relative;
+
+    z-index: 1001;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 220px;
+
+    padding: 13px 24px;
 
     border: none;
 
     border-radius: 8px;
 
-    background: #16a34a;
+    background: #4f704f;
 
-    color: white;
+    color: #ffffff;
 
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 700;
 
     cursor: pointer;
+
+    pointer-events: auto !important;
+
+    opacity: 1 !important;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
+
+.start-location-btn:hover {
+    background: #405d42;
+
+    transform: translateY(-1px);
+}
+
+.start-location-btn:active {
+    transform: translateY(0);
+}
+
+.start-location-btn:disabled {
+    background: #aab7ab;
+
+    opacity: 0.6 !important;
+
+    cursor: not-allowed !important;
+}
+
+
+/* =========================================
+   STOP LOCATION BUTTON
+========================================= */
 
 .stop-location-btn {
     padding: 10px 18px;
@@ -640,14 +767,23 @@
 
     border-radius: 8px;
 
-    background: #dc2626;
+    background: #b94a48;
 
-    color: white;
+    color: #ffffff;
 
     font-weight: 600;
 
     cursor: pointer;
 }
+
+.stop-location-btn:hover {
+    background: #a33e3c;
+}
+
+
+/* =========================================
+   SHARING STATUS
+========================================= */
 
 .sharing-status {
     display: flex;
@@ -656,7 +792,7 @@
 
     gap: 8px;
 
-    color: #16a34a;
+    color: #4f704f;
 
     font-weight: 600;
 }
@@ -665,17 +801,22 @@
     width: 9px;
     height: 9px;
 
-    background: #16a34a;
+    background: #4f704f;
 
     border-radius: 50%;
 }
 
+
+/* =========================================
+   TRUCK LOCATION
+========================================= */
+
 .truck-location {
     padding: 16px;
 
-    background: #f0fdf4;
+    background: #f0f7f0;
 
-    border: 1px solid #bbf7d0;
+    border: 1px solid #c9dcc9;
 
     border-radius: 10px;
 }
@@ -683,7 +824,7 @@
 .truck-location h3 {
     margin: 0 0 10px;
 
-    color: #15803d;
+    color: #405d42;
 }
 
 .coordinates {
@@ -697,7 +838,7 @@
 .updated-text {
     margin: 8px 0 0;
 
-    color: #64748b;
+    color: #647069;
 
     font-size: 12px;
 }
@@ -711,15 +852,194 @@
 
     padding: 15px;
 
-    background: #f8fafc;
+    background: #f6f8f6;
 
     border-radius: 8px;
 
-    color: #64748b;
+    color: #647069;
 }
 
 .waiting-location p {
     margin: 0;
+}
+
+
+/* =========================================
+   LIVE TRUCK TRACKING
+========================================= */
+
+.live-tracking-card {
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 20px;
+
+    margin-top: 20px;
+
+    border: 1px solid #dfe4df;
+
+    box-shadow:
+        0 4px 15px rgba(64, 93, 66, 0.05);
+}
+
+.tracking-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 16px;
+}
+
+.tracking-header h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #202521;
+}
+
+.gps-status {
+    font-size: 14px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   TRACKING MAP
+========================================= */
+
+.tracking-map {
+    height: 300px;
+    width: 100%;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    margin-bottom: 18px;
+}
+
+.map-loading {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background: #f3f5f3;
+}
+
+.truck-marker {
+    font-size: 48px;
+
+    margin-bottom: 8px;
+}
+
+.map-loading p {
+    margin: 0;
+
+    color: #647069;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   TRACKING DETAILS
+========================================= */
+
+.tracking-details {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0;
+
+    margin-bottom: 18px;
+}
+
+.tracking-detail {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid #e5ebe5;
+}
+
+.tracking-detail:last-child {
+    border-bottom: none;
+}
+
+.tracking-detail span {
+    color: #647069;
+
+    font-size: 14px;
+}
+
+.tracking-detail strong {
+    color: #202521;
+
+    font-size: 14px;
+
+    text-align: right;
+}
+
+
+/* =========================================
+   VIEW MAP BUTTON
+========================================= */
+
+.view-map-btn {
+    width: 100%;
+
+    padding: 12px 16px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #4f704f;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.view-map-btn:hover:not(:disabled) {
+    background: #405d42;
+
+    transform: translateY(-1px);
+}
+
+.view-map-btn:disabled {
+    background: #aab7ab;
+
+    cursor: not-allowed;
+
+    transform: none;
 }
 
 
@@ -733,11 +1053,11 @@
 
     text-align: center;
 
-    color: #64748b;
+    color: #647069;
 }
 
 .detail-error {
-    color: #dc2626;
+    color: #b94a48;
 }
 
 
@@ -778,4 +1098,27 @@
 
         gap: 15px;
     }
+
+    .tracking-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .tracking-detail {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 5px;
+    }
+
+    .tracking-detail strong {
+        text-align: left;
+    }
+
+    .start-location-btn {
+        width: 100%;
+    }
+
 }

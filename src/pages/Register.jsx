@@ -1,177 +1,491 @@
-// src/pages/Register.jsx
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../utils/api'
+import Navbar from '../components/Navbar'
+import '../styles/Auth.css'
 
 const Register = () => {
+
     const [form, setForm] = useState({
         name: '',
         email: '',
         password: '',
         role: 'shipper',
-        phone: ''
+        phone: '',
+        truck_number: '',
+        truck_type: 'medium',
+        truck_capacity_kg: '',
+        mileage_kmpl: '4.0'
     })
 
     const [error, setError] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+
     const navigate = useNavigate()
 
+
     const handleChange = (e) => {
+
         setForm({
             ...form,
             [e.target.name]: e.target.value
         })
+
     }
 
+
+    const handleRoleChange = (role) => {
+
+        setForm({
+            ...form,
+            role
+        })
+
+    }
+
+
     const handleSubmit = async (e) => {
+
         e.preventDefault()
+
         setError('')
+        setIsLoading(true)
 
         try {
-            const response = await api.post('/auth/register', form)
 
-            localStorage.setItem('token', response.data.token)
-            localStorage.setItem('user', JSON.stringify(response.data.user))
+            const response = await api.post(
+                '/auth/register',
+                form
+            )
+
+            console.log(
+                'REGISTER RESPONSE:',
+                response.data
+            )
+
+            localStorage.setItem(
+                'token',
+                response.data.token
+            )
+
+            localStorage.setItem(
+                'user',
+                JSON.stringify(response.data.user)
+            )
 
             navigate('/dashboard')
 
         } catch (err) {
-    console.log('FULL ERROR:', err)
-    console.log('STATUS:', err.response?.status)
-    console.log('DATA:', err.response?.data)
-    console.log('MESSAGE:', err.message)
 
-    setError(
-        err.response?.data?.error ||
-        err.response?.data?.message ||
-        err.message ||
-        'Registration failed'
-    )
-}
+            setError(
+                err.response?.data?.error ||
+                'Registration failed. Please try again.'
+            )
+
+        } finally {
+
+            setIsLoading(false)
+
+        }
+
     }
 
+
     return (
-        <div style={{
-            maxWidth: '400px',
-            margin: '50px auto',
-            padding: '20px'
-        }}>
+        <div className="auth-page-wrapper">
 
-            <h1>SmartFreight</h1>
-            <h2>Create Account</h2>
+            <Navbar />
 
-            {error && (
-                <p style={{ color: 'red' }}>
-                    {error}
-                </p>
-            )}
+            <section className="auth-page register-page">
 
-            <form onSubmit={handleSubmit}>
+                <div className="auth-box register-box">
 
-                <div>
-                    <label>Name</label>
+                    {/* HEADER */}
 
-                    <input
-                        name='name'
-                        value={form.name}
-                        onChange={handleChange}
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: '8px',
-                            marginBottom: '10px'
-                        }}
-                    />
-                </div>
+                    <div className="auth-header">
 
-                <div>
-                    <label>Email</label>
+                        <p className="page-label">
+                            GET STARTED
+                        </p>
 
-                    <input
-                        name='email'
-                        type='email'
-                        value={form.email}
-                        onChange={handleChange}
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: '8px',
-                            marginBottom: '10px'
-                        }}
-                    />
-                </div>
+                        <h1>
+                            Join
+                            <br />
+                            <span>SmartFreight.</span>
+                        </h1>
 
-                <div>
-                    <label>Password</label>
+                        <p className="auth-description">
+                            Create your account and become part
+                            of a smarter logistics network.
+                        </p>
 
-                    <input
-                        name='password'
-                        type='password'
-                        value={form.password}
-                        onChange={handleChange}
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: '8px',
-                            marginBottom: '10px'
-                        }}
-                    />
-                </div>
+                    </div>
 
-                <div>
-                    <label>Phone</label>
 
-                    <input
-                        name='phone'
-                        value={form.phone}
-                        onChange={handleChange}
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: '8px',
-                            marginBottom: '10px'
-                        }}
-                    />
-                </div>
+                    {/* ERROR */}
 
-                <div>
-                    <label>I am a</label>
+                    {error && (
+                        <div className="auth-error">
+                            {error}
+                        </div>
+                    )}
 
-                    <select
-                        name='role'
-                        value={form.role}
-                        onChange={handleChange}
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            padding: '8px',
-                            marginBottom: '10px'
-                        }}
+
+                    <form
+                        className="auth-form"
+                        onSubmit={handleSubmit}
                     >
-                        <option value='shipper'>
-                            Shipper — I need to send goods
-                        </option>
 
-                        <option value='transporter'>
-                            Transporter — I have a truck
-                        </option>
-                    </select>
+                        {/* ROLE */}
+
+                        <div className="form-group">
+
+                            <label>
+                                I am a
+                            </label>
+
+                            <div className="role-selection">
+
+                                {/* SHIPPER */}
+
+                                <button
+                                    type="button"
+                                    className={
+                                        form.role === 'shipper'
+                                            ? 'role-card selected'
+                                            : 'role-card'
+                                    }
+                                    onClick={() =>
+                                        handleRoleChange('shipper')
+                                    }
+                                >
+
+                                    <span className="role-icon">
+                                        📦
+                                    </span>
+
+                                    <strong>
+                                        Shipper
+                                    </strong>
+
+                                    <small>
+                                        I need to send goods
+                                    </small>
+
+                                </button>
+
+
+                                {/* TRANSPORTER */}
+
+                                <button
+                                    type="button"
+                                    className={
+                                        form.role === 'transporter'
+                                            ? 'role-card selected'
+                                            : 'role-card'
+                                    }
+                                    onClick={() =>
+                                        handleRoleChange('transporter')
+                                    }
+                                >
+
+                                    <span className="role-icon">
+                                        🚛
+                                    </span>
+
+                                    <strong>
+                                        Transporter
+                                    </strong>
+
+                                    <small>
+                                        I have a truck
+                                    </small>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* NAME */}
+
+                        <div className="form-group">
+
+                            <label htmlFor="name">
+                                Full Name *
+                            </label>
+
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                placeholder="Rahul Sharma"
+                                value={form.name}
+                                onChange={handleChange}
+                                required
+                            />
+
+                        </div>
+
+
+                        {/* EMAIL */}
+
+                        <div className="form-group">
+
+                            <label htmlFor="email">
+                                Email Address *
+                            </label>
+
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="rahul@gmail.com"
+                                value={form.email}
+                                onChange={handleChange}
+                                required
+                            />
+
+                        </div>
+
+
+                        {/* PASSWORD */}
+
+                        <div className="form-group">
+
+                            <label htmlFor="password">
+                                Password *
+                            </label>
+
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                placeholder="Minimum 6 characters"
+                                value={form.password}
+                                onChange={handleChange}
+                                minLength={6}
+                                required
+                            />
+
+                        </div>
+
+
+                        {/* PHONE */}
+
+                        <div className="form-group">
+
+                            <label htmlFor="phone">
+                                Phone Number *
+                            </label>
+
+                            <input
+                                id="phone"
+                                name="phone"
+                                type="tel"
+                                placeholder="9876543210"
+                                value={form.phone}
+                                onChange={handleChange}
+                                required
+                            />
+
+                        </div>
+
+
+                        {/* TRANSPORTER DETAILS */}
+
+                        {form.role === 'transporter' && (
+
+                            <div className="truck-details">
+
+                                <div className="truck-details-header">
+
+                                    <span>
+                                        🚛
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            Truck Details
+                                        </strong>
+
+                                        <p>
+                                            Tell us about your vehicle
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* TRUCK NUMBER */}
+
+                                <div className="form-group">
+
+                                    <label htmlFor="truck_number">
+                                        Truck Registration Number *
+                                    </label>
+
+                                    <input
+                                        id="truck_number"
+                                        name="truck_number"
+                                        type="text"
+                                        placeholder="KA-01-AB-1234"
+                                        value={form.truck_number}
+                                        onChange={handleChange}
+                                        required
+                                    />
+
+                                </div>
+
+
+                                {/* TRUCK TYPE */}
+
+                                <div className="form-group">
+
+                                    <label htmlFor="truck_type">
+                                        Truck Type *
+                                    </label>
+
+                                    <select
+                                        id="truck_type"
+                                        name="truck_type"
+                                        value={form.truck_type}
+                                        onChange={handleChange}
+                                        required
+                                    >
+
+                                        <option value="mini">
+                                            Mini Truck — up to 1 tonne
+                                        </option>
+
+                                        <option value="medium">
+                                            Medium Truck — 1–5 tonnes
+                                        </option>
+
+                                        <option value="heavy">
+                                            Heavy Truck — 5–15 tonnes
+                                        </option>
+
+                                        <option value="trailer">
+                                            Trailer — 15+ tonnes
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                {/* CAPACITY */}
+
+                                <div className="form-group">
+
+                                    <label htmlFor="truck_capacity_kg">
+                                        Carrying Capacity (kg) *
+                                    </label>
+
+                                    <input
+                                        id="truck_capacity_kg"
+                                        name="truck_capacity_kg"
+                                        type="number"
+                                        min="1"
+                                        placeholder="e.g. 8000"
+                                        value={
+                                            form.truck_capacity_kg
+                                        }
+                                        onChange={handleChange}
+                                        required
+                                    />
+
+                                </div>
+
+
+                                {/* MILEAGE */}
+
+                                <div className="form-group">
+
+                                    <label htmlFor="mileage_kmpl">
+                                        Fuel Mileage
+                                        <span className="label-hint">
+                                            Typical: 3–6 km/L
+                                        </span>
+                                    </label>
+
+                                    <input
+                                        id="mileage_kmpl"
+                                        name="mileage_kmpl"
+                                        type="number"
+                                        step="0.1"
+                                        min="2"
+                                        max="10"
+                                        placeholder="4.0"
+                                        value={form.mileage_kmpl}
+                                        onChange={handleChange}
+                                        required
+                                    />
+
+                                </div>
+
+
+                                {/* MILEAGE WARNING */}
+
+                                <div className="truck-warning">
+
+                                    <span>⚠️</span>
+
+                                    <p>
+                                        Please enter realistic mileage.
+                                        Heavy trucks typically get
+                                        3–4 km/L. We verify this against
+                                        your trip history.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        )}
+
+
+                        {/* SUBMIT */}
+
+                        <button
+                            type="submit"
+                            className="auth-submit"
+                            disabled={isLoading}
+                        >
+
+                            {isLoading
+                                ? 'Creating account...'
+                                : 'Create Account'
+                            }
+
+                            {!isLoading && (
+                                <span>→</span>
+                            )}
+
+                        </button>
+
+                    </form>
+
+
+                    {/* LOGIN */}
+
+                    <p className="auth-switch">
+
+                        Already have an account?
+
+                        <Link to="/login">
+                            Login here
+                        </Link>
+
+                    </p>
+
                 </div>
 
-                <button
-                    type='submit'
-                    style={{
-                        width: '100%',
-                        padding: '10px'
-                    }}
-                >
-                    Create Account
-                </button>
-
-            </form>
-
-            <p>
-                Already registered? <Link to='/'>Login here</Link>
-            </p>
+            </section>
 
         </div>
     )

@@ -1,9 +1,9 @@
 /* =========================================
    SMARTFREIGHT - POST SHIPMENT
-   ========================================= */
+========================================= */
 
 .post-shipment-page {
-   
+
     background: #f8fafc;
     color: #0f172a;
 }
@@ -11,7 +11,7 @@
 
 /* =========================================
    FORM CONTAINER
-   ========================================= */
+========================================= */
 
 .post-shipment-container {
     width: calc(100% - 40px);
@@ -32,7 +32,7 @@
 
 /* =========================================
    HEADER
-   ========================================= */
+========================================= */
 
 .form-header {
     margin-bottom: 28px;
@@ -62,7 +62,7 @@
 
 /* =========================================
    FORM
-   ========================================= */
+========================================= */
 
 .shipment-form {
     display: flex;
@@ -75,7 +75,7 @@
 
 /* =========================================
    TWO COLUMN ROW
-   ========================================= */
+========================================= */
 
 .form-row {
     display: grid;
@@ -88,7 +88,7 @@
 
 /* =========================================
    FORM GROUP
-   ========================================= */
+========================================= */
 
 .form-group {
     display: flex;
@@ -109,7 +109,7 @@
 
 /* =========================================
    INPUTS
-   ========================================= */
+========================================= */
 
 .form-group input,
 .form-group select,
@@ -140,7 +140,9 @@
 }
 
 
-/* Placeholder */
+/* =========================================
+   PLACEHOLDER
+========================================= */
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
@@ -148,19 +150,24 @@
 }
 
 
-/* Focus */
+/* =========================================
+   FOCUS
+========================================= */
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: #2563eb;
+
+    border-color: #4f704f;
 
     box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.10);
+        0 0 0 3px rgba(79, 112, 79, 0.12);
 }
 
 
-/* Textarea */
+/* =========================================
+   TEXTAREA
+========================================= */
 
 .form-group textarea {
     resize: vertical;
@@ -171,7 +178,7 @@
 
 /* =========================================
    ERROR
-   ========================================= */
+========================================= */
 
 .form-error {
     background: #fef2f2;
@@ -191,10 +198,11 @@
 
 
 /* =========================================
-   POST BUTTON
-   ========================================= */
+   POST SHIPMENT BUTTON
+========================================= */
 
 .create-shipment-btn {
+
     width: 100%;
 
     padding: 14px 20px;
@@ -205,13 +213,15 @@
 
     border-radius: 8px;
 
-    background: #2563eb;
+    background: #4f704f;
 
     color: #ffffff;
 
     font-size: 15px;
 
     font-weight: 600;
+
+    font-family: inherit;
 
     cursor: pointer;
 
@@ -220,33 +230,51 @@
         transform 0.2s ease;
 }
 
+
+/* =========================================
+   BUTTON HOVER
+========================================= */
+
 .create-shipment-btn:hover:not(:disabled) {
-    background: #1d4ed8;
+
+    background: #3f5d40;
 
     transform: translateY(-1px);
 }
 
+
+/* =========================================
+   BUTTON ACTIVE
+========================================= */
+
 .create-shipment-btn:active:not(:disabled) {
+
     transform: translateY(0);
 }
 
 
-/* Disabled */
+/* =========================================
+   DISABLED
+========================================= */
 
 .create-shipment-btn:disabled {
+
     background: #94a3b8;
 
     cursor: not-allowed;
+
+    transform: none;
 }
 
 
 /* =========================================
    RESPONSIVE
-   ========================================= */
+========================================= */
 
 @media (max-width: 650px) {
 
     .post-shipment-container {
+
         width: calc(100% - 30px);
 
         margin-top: 25px;
@@ -255,12 +283,15 @@
     }
 
     .form-row {
+
         grid-template-columns: 1fr;
 
         gap: 22px;
     }
 
     .form-header h1 {
+
         font-size: 24px;
     }
+
 }

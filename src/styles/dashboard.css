@@ -1,35 +1,37 @@
 /* =========================================
    SMARTFREIGHT DASHBOARD
-   ========================================= */
+========================================= */
 
 .dashboard {
     min-height: 100vh;
     width: 100%;
-    background: #f8fafc;
-    color: #0f172a;
 
-    /* IMPORTANT:
-       Navbar and dashboard content should be
-       stacked vertically, not side by side. */
+    background: #f3f5f3;
+    color: #202521;
+
     display: block;
 }
 
 
 /* =========================================
    MAIN DASHBOARD
-   ========================================= */
+========================================= */
 
 .dashboard-main {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
+
     margin: 0 auto;
+
     padding: 45px 40px;
+
+    box-sizing: border-box;
 }
 
 
 /* =========================================
    WELCOME
-   ========================================= */
+========================================= */
 
 .welcome-section {
     margin-bottom: 32px;
@@ -37,68 +39,143 @@
 
 .welcome-section h1 {
     margin: 0;
+
     font-size: 32px;
     font-weight: 700;
-    color: #0f172a;
+
+    color: #202521;
 }
 
 .welcome-section p {
     margin: 8px 0 0;
+
     font-size: 16px;
-    color: #64748b;
+
+    color: #647069;
 }
 
 
 /* =========================================
    STATISTICS
-   ========================================= */
+========================================= */
 
 .stats-grid {
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: stretch;
+
+    gap: 24px;
+
     margin-bottom: 45px;
 }
+
+
+/* =========================================
+   STAT CARD
+========================================= */
 
 .stat-card {
     background: #ffffff;
 
-    border: 1px solid #1f3044;
+    border: 1px solid #cfd8d0;
+
     border-radius: 12px;
 
-    min-height: 80px;
+    width: 260px;
+    min-height: 100px;
+
     padding: 25px;
 
     display: flex;
     flex-direction: column;
+
+    align-items: center;
     justify-content: center;
 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
 
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow:
+        0 2px 8px rgba(64, 93, 66, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    text-align: center;
 }
+
+button.stat-card {
+    appearance: none;
+}
+
+
+/* =========================================
+   STAT CARD HOVER
+========================================= */
 
 .stat-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+
+    box-shadow:
+        0 6px 18px rgba(79, 112, 79, 0.12);
+
+    border-color: #4f704f;
 }
+
+
+/* =========================================
+   ACTIVE STAT CARD
+========================================= */
+
+.stat-card-active {
+    border: 2px solid #4f704f;
+
+    background: #edf3ed;
+
+    box-shadow:
+        0 4px 14px rgba(79, 112, 79, 0.15);
+}
+
+
+/* =========================================
+   STAT NUMBER
+========================================= */
 
 .stat-number {
     font-size: 32px;
+
     font-weight: 700;
-    color: #0f172a;
+
+    color: #202521;
+
     margin-bottom: 8px;
 }
 
+
+/* =========================================
+   STAT TITLE
+========================================= */
+
 .stat-title {
     font-size: 15px;
-    color: #64748b;
+
+    color: #647069;
+
+    font-weight: 500;
 }
+
 
 /* =========================================
    ERROR MESSAGE
-   ========================================= */
+========================================= */
 
 .error-message {
     background: #fef2f2;
@@ -125,7 +202,7 @@
 
 /* =========================================
    SHIPMENTS SECTION
-   ========================================= */
+========================================= */
 
 .shipments-section {
     width: 100%;
@@ -135,6 +212,7 @@
     width: 100%;
 
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
@@ -145,62 +223,73 @@
     margin: 0;
 
     font-size: 23px;
+
     font-weight: 700;
+
+    color: #202521;
 }
 
 .shipments-header p {
     margin: 6px 0 0;
 
-    color: #64748b;
+    color: #647069;
+
     font-size: 14px;
 }
 
 
 /* =========================================
    POST SHIPMENT BUTTON
-   ========================================= */
+========================================= */
 
 .post-btn,
 .empty-post-btn {
-    background: #2563eb;
+    background: #4f704f;
 
     color: #ffffff;
 
     border: none;
+
     border-radius: 8px;
 
     padding: 12px 18px;
 
     font-size: 14px;
+
     font-weight: 600;
 
     cursor: pointer;
 
-    transition: background 0.2s ease,
-                transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .post-btn:hover,
 .empty-post-btn:hover {
-    background: #1d4ed8;
+    background: #405d42;
+
     transform: translateY(-1px);
 }
 
 
 /* =========================================
    EMPTY STATE
-   ========================================= */
+========================================= */
 
 .empty-state {
     width: 95%;
+
     min-height: 200px;
 
-    background: #7599c7;
+    background: #f9faf9;
 
-    border: 1px solid #3e526c;
+    border: 1px solid #dfe4df;
+
     border-radius: 14px;
 
     display: flex;
+
     flex-direction: column;
 
     align-items: center;
@@ -210,9 +299,9 @@
 
     padding: 25px;
 
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    box-shadow:
+        0 2px 6px rgba(64, 93, 66, 0.04);
 }
-
 
 .empty-icon {
     width: 65px;
@@ -220,9 +309,10 @@
 
     border-radius: 50%;
 
-    background: #eff6ff;
+    background: #edf3ed;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -236,12 +326,14 @@
 
     font-size: 21px;
     font-weight: 700;
+
+    color: #202521;
 }
 
 .empty-state p {
     margin: 8px 0 22px;
 
-    color: #64748b;
+    color: #647069;
 
     font-size: 15px;
 }
@@ -249,7 +341,7 @@
 
 /* =========================================
    SHIPMENT LIST
-   ========================================= */
+========================================= */
 
 .shipment-list {
     width: 100%;
@@ -263,44 +355,52 @@
 
 /* =========================================
    SHIPMENT CARD
-   ========================================= */
+========================================= */
 
 .shipment-card {
     width: 100%;
 
     background: #ffffff;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid #dfe4df;
+
     border-radius: 12px;
 
     padding: 22px;
 
     display: flex;
+
     align-items: center;
 
     gap: 30px;
 
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    box-sizing: border-box;
 
-    transition: transform 0.2s ease,
-                box-shadow 0.2s ease;
+    box-shadow:
+        0 2px 6px rgba(64, 93, 66, 0.04);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .shipment-card:hover {
     transform: translateY(-2px);
 
-    box-shadow: 0 7px 18px rgba(15, 23, 42, 0.08);
+    box-shadow:
+        0 7px 18px rgba(64, 93, 66, 0.08);
 }
 
 
 /* =========================================
    SHIPMENT ROUTE
-   ========================================= */
+========================================= */
 
 .shipment-route {
     min-width: 280px;
 
     display: flex;
+
     align-items: center;
 
     gap: 18px;
@@ -308,6 +408,7 @@
 
 .shipment-route div {
     display: flex;
+
     flex-direction: column;
 
     gap: 5px;
@@ -316,7 +417,7 @@
 .location-label {
     font-size: 10px;
 
-    color: #94a3b8;
+    color: #8a958d;
 
     font-weight: 700;
 
@@ -325,10 +426,19 @@
 
 .shipment-route strong {
     font-size: 16px;
+
+    color: #202521;
+
+    text-transform: none !important;
 }
 
+
+/* =========================================
+   ROUTE ARROW
+========================================= */
+
 .route-arrow {
-    color: #2563eb;
+    color: #4f704f;
 
     font-size: 22px;
 
@@ -338,40 +448,63 @@
 
 /* =========================================
    SHIPMENT DETAILS
-   ========================================= */
+========================================= */
 
 .shipment-details {
     flex: 1;
 
-    display: flex;
+    display: grid;
+
+    grid-template-columns:
+        110px
+        120px
+        180px;
+
     align-items: center;
 
-    gap: 40px;
+    gap: 30px;
+
+    min-width: 0;
 }
 
-.shipment-details div {
+
+/* Only direct children */
+
+.shipment-details > div {
     display: flex;
+
     flex-direction: column;
 
     gap: 5px;
+
+    min-width: 0;
 }
 
 .shipment-details div > span:first-child {
-    color: #94a3b8;
+    color: #8a958d;
 
     font-size: 12px;
 }
 
 .shipment-details strong {
     font-size: 14px;
+
+    color: #202521;
 }
 
 
 /* =========================================
-   STATUS
-   ========================================= */
+   STATUS BADGES
+========================================= */
 
 .shipment-status {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+
     padding: 5px 11px;
 
     border-radius: 20px;
@@ -379,29 +512,184 @@
     font-size: 12px !important;
 
     font-weight: 600;
+
+    white-space: nowrap;
 }
+
+
+/* =========================================
+   POSTED
+========================================= */
 
 .shipment-status.open {
-    background: #dcfce7;
-    color: #15803d;
+    background: #edf3ed;
+
+    color: #4f704f;
+
+    border: 1px solid #c9dcc9;
 }
 
+
+/* =========================================
+   ASSIGNED
+========================================= */
+
+.shipment-status.assigned {
+    background: #f5efd9;
+
+    color: #8a6d22;
+
+    border: 1px solid #e5d8a8;
+}
+
+
+/* =========================================
+   IN TRANSIT
+========================================= */
+
+.shipment-status.in-transit {
+    background: #e8f0e8;
+
+    color: #456b48;
+
+    border: 1px solid #c6d9c7;
+}
+
+
+/* =========================================
+   DELIVERED
+========================================= */
+
 .shipment-status.completed {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: #d9ead9 !important;
+
+    color: #35613a !important;
+
+    border: 1px solid #b8d4b9 !important;
+}
+
+
+/* =========================================
+   CANCELLED
+========================================= */
+
+.shipment-status.cancelled {
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    border: 1px solid #fecaca;
+}
+
+
+/* =========================================
+   STATUS CONTAINER
+========================================= */
+
+.status-container {
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+
+    justify-content: flex-start !important;
+
+    gap: 6px !important;
+}
+
+
+/* =========================================
+   STATUS LABEL
+========================================= */
+
+.status-label {
+    display: block;
+
+    color: #8a958d !important;
+
+    font-size: 12px !important;
+}
+
+
+/* =========================================
+   STATUS ACTIONS
+========================================= */
+
+.status-actions {
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+
+    justify-content: flex-start !important;
+
+    gap: 6px !important;
+}
+
+
+/* =========================================
+   CANCEL BUTTON
+   SAME SHAPE AS POSTED
+========================================= */
+
+.cancel-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: fit-content;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    border: 1px solid #fecaca;
+
+    font-family: inherit;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background: #fee2e2;
+
+    color: #991b1b;
+
+    border-color: #fca5a5;
 }
 
 
 /* =========================================
    VIEW BUTTON
-   ========================================= */
+========================================= */
 
 .view-btn {
     background: transparent;
 
     border: none;
 
-    color: #2563eb;
+    color: #4f704f;
 
     font-size: 14px;
 
@@ -410,16 +698,33 @@
     cursor: pointer;
 
     white-space: nowrap;
+
+    transition: color 0.2s ease;
 }
 
 .view-btn:hover {
-    color: #1d4ed8;
+    color: #405d42;
+}
+
+
+/* =========================================
+   BID LIST
+========================================= */
+
+.bid-list {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
 }
 
 
 /* =========================================
    LOADING
-   ========================================= */
+========================================= */
 
 .dashboard-loading {
     min-height: 400px;
@@ -429,18 +734,19 @@
     flex-direction: column;
 
     align-items: center;
+
     justify-content: center;
 
-    color: #64748b;
+    color: #647069;
 }
 
 .loading-spinner {
     width: 36px;
     height: 36px;
 
-    border: 4px solid #e2e8f0;
+    border: 4px solid #dfe4df;
 
-    border-top-color: #2563eb;
+    border-top-color: #4f704f;
 
     border-radius: 50%;
 
@@ -450,20 +756,305 @@
 }
 
 @keyframes spin {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 
 /* =========================================
-   RESPONSIVE
-   ========================================= */
+   FORCE GREEN VIEW BUTTON
+========================================= */
 
-@media (max-width: 900px) {
+.dashboard .shipment-card .view-btn {
+    color: #4f704f !important;
+}
+
+.dashboard .shipment-card .view-btn:hover {
+    color: #405d42 !important;
+}
+
+
+/* =========================================
+   FORCE GREEN ROUTE ARROW
+========================================= */
+
+.dashboard .shipment-card .route-arrow {
+    color: #4f704f !important;
+}
+
+
+/* =========================================
+   CANCEL CONFIRMATION MODAL
+========================================= */
+
+.modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(20, 28, 22, 0.48);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.cancel-modal {
+    width: 100%;
+
+    max-width: 430px;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 60px rgba(32, 37, 33, 0.18);
+
+    animation:
+        modalAppear 0.18s ease-out;
+}
+
+
+/* =========================================
+   WARNING ICON
+========================================= */
+
+.cancel-icon {
+    width: 52px;
+
+    height: 52px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    border: 1px solid #fecaca;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================
+   MODAL HEADING
+========================================= */
+
+.cancel-modal h3 {
+    margin: 0;
+
+    color: #202521;
+
+    font-size: 22px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================
+   MODAL DESCRIPTION
+========================================= */
+
+.cancel-modal p {
+    margin: 12px 0 8px;
+
+    color: #647069;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+.cancel-modal p strong {
+    color: #202521;
+}
+
+
+/* =========================================
+   WARNING TEXT
+========================================= */
+
+.cancel-warning {
+    display: block;
+
+    margin-top: 10px;
+
+    color: #8a958d;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   MODAL ACTIONS
+========================================= */
+
+.modal-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+
+/* =========================================
+   KEEP SHIPMENT
+========================================= */
+
+.keep-shipment-btn {
+    padding: 10px 16px;
+
+    border-radius: 8px;
+
+    border: 1px solid #dfe4df;
+
+    background: #ffffff;
+
+    color: #4f704f;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.keep-shipment-btn:hover {
+    background: #f3f5f3;
+
+    border-color: #cfd8d0;
+}
+
+
+/* =========================================
+   CONFIRM CANCEL
+========================================= */
+
+.confirm-cancel-btn {
+    padding: 10px 16px;
+
+    border-radius: 8px;
+
+    border: 1px solid #fecaca;
+
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.confirm-cancel-btn:hover {
+    background: #fee2e2;
+
+    border-color: #fca5a5;
+
+    color: #991b1b;
+}
+
+
+/* =========================================
+   DISABLED MODAL BUTTON
+========================================= */
+
+.confirm-cancel-btn:disabled,
+.keep-shipment-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================
+   MODAL ANIMATION
+========================================= */
+
+@keyframes modalAppear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(8px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =========================================
+   RESPONSIVE — TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .dashboard-main {
+        padding: 40px 30px;
+    }
 
     .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        flex-wrap: wrap;
+    }
+
+    .stat-card {
+        width: 210px;
     }
 
     .shipment-card {
@@ -472,10 +1063,16 @@
 
     .shipment-details {
         width: 100%;
+
         flex-basis: 100%;
     }
+
 }
 
+
+/* =========================================
+   RESPONSIVE — MOBILE
+========================================= */
 
 @media (max-width: 600px) {
 
@@ -488,7 +1085,17 @@
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 15px;
+    }
+
+    .stat-card {
+        width: 100%;
+
+        max-width: 320px;
     }
 
     .shipments-header {
@@ -507,6 +1114,8 @@
         flex-direction: column;
 
         align-items: flex-start;
+
+        gap: 20px;
     }
 
     .shipment-route {
@@ -516,10 +1125,303 @@
     }
 
     .shipment-details {
+        width: 100%;
+
+        display: flex;
+
         flex-direction: column;
 
         align-items: flex-start;
 
         gap: 15px;
     }
+
+    .view-btn {
+        align-self: flex-end;
+    }
+
+
+    /* Modal mobile */
+
+    .cancel-modal {
+        max-width: 360px;
+
+        padding: 25px 20px;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .keep-shipment-btn,
+    .confirm-cancel-btn {
+        width: 100%;
+    }
+
+}
+/* =========================================
+   CANCEL MODAL
+========================================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(32, 37, 33, 0.45);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+}
+
+.cancel-modal {
+    width: 100%;
+    max-width: 430px;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.18);
+
+    animation: cancelModalIn 0.2s ease;
+}
+
+@keyframes cancelModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* WARNING ICON */
+
+.cancel-icon {
+    width: 52px;
+    height: 52px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    background: #fee2e2;
+
+    color: #b91c1c;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+    font-weight: 700;
+}
+
+
+/* HEADING */
+
+.cancel-modal h3 {
+    margin: 0;
+
+    font-size: 22px;
+
+    color: #202521;
+
+    font-weight: 700;
+}
+
+
+/* DESCRIPTION */
+
+.cancel-modal p {
+    margin: 12px 0;
+
+    color: #647069;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+.cancel-modal p strong {
+    color: #202521;
+}
+
+
+/* WARNING */
+
+.cancel-warning {
+    display: block;
+
+    margin-top: 10px;
+
+    color: #b91c1c;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+/* MODAL BUTTONS */
+
+.modal-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 25px;
+}
+
+
+/* KEEP */
+
+.keep-shipment-btn {
+    background: #f3f5f3;
+
+    color: #405d42;
+
+    border: 1px solid #cfd8d0;
+
+    border-radius: 8px;
+
+    padding: 10px 16px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.keep-shipment-btn:hover {
+    background: #e8ede8;
+}
+
+
+/* CONFIRM CANCEL */
+
+.confirm-cancel-btn {
+    background: #fee2e2;
+
+    color: #b91c1c;
+
+    border: 1px solid #fecaca;
+
+    border-radius: 8px;
+
+    padding: 10px 16px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.confirm-cancel-btn:hover {
+    background: #fecaca;
+
+    color: #991b1b;
+}
+
+.confirm-cancel-btn:disabled,
+.keep-shipment-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================
+   POSTED + CANCEL
+========================================= */
+
+.status-actions {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 7px;
+}
+
+
+/* CANCEL BUTTON ON SHIPMENT CARD */
+
+.cancel-btn {
+    appearance: none;
+
+    background: #fee2e2;
+
+    color: #b91c1c;
+
+    border: 1px solid #fecaca;
+
+    border-radius: 20px;
+
+    padding: 5px 11px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background: #fecaca;
+
+    border-color: #fca5a5;
+
+    color: #991b1b;
+}
+
+
+/* POSTED STATUS */
+
+.shipment-status.open {
+    background: #edf3ed;
+
+    color: #4f704f;
+
+    border: 1px solid #c9dcc9;
+
+    border-radius: 20px;
+
+    padding: 5px 11px;
 }
