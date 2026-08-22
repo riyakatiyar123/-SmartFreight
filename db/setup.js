@@ -84,7 +84,9 @@ const setupDatabase = async () => {
                 DEFAULT 0
         `)
 
-        console.log('Users table updated successfully!')
+        console.log(
+            '✅ Users table updated successfully!'
+        )
 
 
         // ========================================
@@ -121,7 +123,42 @@ const setupDatabase = async () => {
         `)
 
         console.log(
-            'Shipments table updated successfully!'
+            '✅ Shipments table updated successfully!'
+        )
+
+
+        // ========================================
+        // SHIPMENT STATUS
+        // ========================================
+
+        console.log('')
+        console.log(
+            'Updating shipment status options...'
+        )
+
+        // Remove old constraint if it exists.
+        await pool.query(`
+            ALTER TABLE shipments
+            DROP CONSTRAINT IF EXISTS shipments_status_check
+        `)
+
+        // Add the new status constraint.
+        await pool.query(`
+            ALTER TABLE shipments
+            ADD CONSTRAINT shipments_status_check
+            CHECK (
+                status IN (
+                    'posted',
+                    'assigned',
+                    'in_transit',
+                    'delivered',
+                    'cancelled'
+                )
+            )
+        `)
+
+        console.log(
+            '✅ Shipment status supports cancelled!'
         )
 
 
@@ -157,7 +194,7 @@ const setupDatabase = async () => {
 
 
         // ========================================
-        // VERIFY OTHER SHIPMENT COLUMNS
+        // VERIFY SHIPMENT COLUMNS
         // ========================================
 
         const shipmentColumns = await pool.query(`
@@ -179,6 +216,67 @@ const setupDatabase = async () => {
             )
 
         })
+
+
+        // ========================================
+        // BIDS TABLE
+        // ========================================
+
+        console.log('')
+        console.log('Checking bids table...')
+
+        /*
+            IMPORTANT:
+
+            We are NOT creating the bids table from scratch
+            because your project already has one.
+
+            We only make sure the status column exists.
+        */
+
+        await pool.query(`
+            ALTER TABLE bids
+            ADD COLUMN IF NOT EXISTS status VARCHAR(20)
+                DEFAULT 'pending'
+        `)
+
+        console.log(
+            '✅ Bids status column ready!'
+        )
+
+
+        // ========================================
+        // BID STATUS
+        // ========================================
+
+        console.log('')
+        console.log(
+            'Updating bid status options...'
+        )
+
+        // Remove old constraint if it exists.
+        await pool.query(`
+            ALTER TABLE bids
+            DROP CONSTRAINT IF EXISTS bids_status_check
+        `)
+
+        // Add new bid statuses.
+        await pool.query(`
+            ALTER TABLE bids
+            ADD CONSTRAINT bids_status_check
+            CHECK (
+                status IN (
+                    'pending',
+                    'accepted',
+                    'rejected',
+                    'withdrawn'
+                )
+            )
+        `)
+
+        console.log(
+            '✅ Bid status supports withdrawn!'
+        )
 
 
         // ========================================
@@ -218,7 +316,7 @@ const setupDatabase = async () => {
         `)
 
         console.log(
-            'Ratings table ready!'
+            '✅ Ratings table ready!'
         )
 
 
@@ -254,12 +352,12 @@ const setupDatabase = async () => {
         `)
 
         console.log(
-            'Location history table ready!'
+            '✅ Location history table ready!'
         )
 
 
         // ========================================
-        // FINAL VERIFICATION
+        // FINAL DATABASE CHECK
         // ========================================
 
         console.log('')
@@ -267,16 +365,34 @@ const setupDatabase = async () => {
         console.log('FINAL DATABASE CHECK')
         console.log('======================================')
 
+
         const finalCheck = await pool.query(`
             SELECT
+
                 current_database() AS database,
+
                 EXISTS (
                     SELECT 1
                     FROM information_schema.columns
                     WHERE table_name = 'shipments'
                     AND column_name = 'arrived_at'
-                ) AS arrived_at_exists
+                ) AS arrived_at_exists,
+
+                EXISTS (
+                    SELECT 1
+                    FROM information_schema.columns
+                    WHERE table_name = 'bids'
+                    AND column_name = 'status'
+                ) AS bid_status_exists,
+
+                EXISTS (
+                    SELECT 1
+                    FROM information_schema.columns
+                    WHERE table_name = 'shipments'
+                    AND column_name = 'status'
+                ) AS shipment_status_exists
         `)
+
 
         console.log(
             `Database: ${finalCheck.rows[0].database}`
@@ -286,18 +402,48 @@ const setupDatabase = async () => {
             `arrived_at exists: ${finalCheck.rows[0].arrived_at_exists}`
         )
 
+        console.log(
+            `shipment status exists: ${finalCheck.rows[0].shipment_status_exists}`
+        )
+
+        console.log(
+            `bid status exists: ${finalCheck.rows[0].bid_status_exists}`
+        )
+
+
+        // ========================================
+        // SUCCESS
+        // ========================================
 
         if (
-            finalCheck.rows[0].arrived_at_exists
+            finalCheck.rows[0].arrived_at_exists &&
+            finalCheck.rows[0].shipment_status_exists &&
+            finalCheck.rows[0].bid_status_exists
         ) {
 
             console.log('')
+            console.log(
+                '======================================'
+            )
+
             console.log(
                 '✅ DATABASE SETUP COMPLETED SUCCESSFULLY'
             )
 
             console.log(
                 '✅ shipments.arrived_at is ready'
+            )
+
+            console.log(
+                '✅ shipments.status supports cancelled'
+            )
+
+            console.log(
+                '✅ bids.status supports withdrawn'
+            )
+
+            console.log(
+                '======================================'
             )
 
         } else {
@@ -307,14 +453,7 @@ const setupDatabase = async () => {
                 '❌ DATABASE SETUP FAILED'
             )
 
-            console.error(
-                '❌ shipments.arrived_at is still missing'
-            )
-
         }
-
-
-        console.log('======================================')
 
 
     } catch (error) {

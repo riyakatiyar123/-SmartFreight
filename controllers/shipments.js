@@ -949,7 +949,24 @@ const completeDelivery = async (req, res) => {
 
 
 // =====================================================
-// DELETE SHIPMENT
+// CANCEL / DELETE SHIPMENT
+// =====================================================
+//
+// SHIPPER ONLY
+//
+// POSTED:
+//     - If no bids → permanently delete
+//     - If bids exist → cancel shipment
+//
+// ASSIGNED:
+//     - Cancel shipment
+//
+// IN_TRANSIT:
+//     - NOT allowed
+//
+// DELIVERED:
+//     - NOT allowed
+//
 // =====================================================
 
 const deleteShipment = async (req, res) => {
@@ -959,18 +976,23 @@ const deleteShipment = async (req, res) => {
         const { id } = req.params
 
 
-        const shipment =
+        // ==========================================
+        // GET SHIPMENT
+        // ==========================================
+
+        const shipmentResult =
             await pool.query(
-
-                'SELECT * FROM shipments WHERE id = $1',
-
+                `
+                SELECT *
+                FROM shipments
+                WHERE id = $1
+                `,
                 [id]
-
             )
 
 
         if (
-            shipment.rows.length === 0
+            shipmentResult.rows.length === 0
         ) {
 
             return res.status(404).json({
@@ -981,51 +1003,262 @@ const deleteShipment = async (req, res) => {
         }
 
 
+        const shipment =
+            shipmentResult.rows[0]
+
+
         // ==========================================
-        // ONLY OWNER CAN DELETE
+        // ONLY SHIPPER / OWNER
         // ==========================================
 
         if (
-            String(
-                shipment.rows[0].user_id
-            ) !==
+            String(shipment.user_id) !==
             String(req.user.id)
         ) {
 
             return res.status(403).json({
                 error:
-                    'Not your shipment'
+                    'You can only cancel your own shipment'
             })
 
         }
 
 
-        await pool.query(
-            'DELETE FROM shipments WHERE id = $1',
-            [id]
-        )
+        // ==========================================
+        // DELIVERED
+        // ==========================================
+
+        if (
+            shipment.status === 'delivered'
+        ) {
+
+            return res.status(400).json({
+                error:
+                    'A delivered shipment cannot be cancelled or deleted'
+            })
+
+        }
 
 
-        res.json({
-            message:
-                'Shipment cancelled successfully'
+        // ==========================================
+        // IN TRANSIT
+        // ==========================================
+
+        if (
+            shipment.status === 'in_transit'
+        ) {
+
+            return res.status(400).json({
+                error:
+                    'A shipment that is already in transit cannot be cancelled'
+            })
+
+        }
+
+
+        // ==========================================
+        // CHECK BID COUNT
+        // ==========================================
+
+        const bidResult =
+            await pool.query(
+                `
+                SELECT COUNT(*) AS count
+                FROM bids
+                WHERE shipment_id = $1
+                `,
+                [id]
+            )
+
+
+        const bidCount =
+            Number(
+                bidResult.rows[0].count
+            )
+
+
+        // ==========================================
+        // POSTED + NO BIDS
+        // ==========================================
+        //
+        // Permanently delete shipment.
+        //
+        // This is the only situation where
+        // we physically delete the shipment.
+        // ==========================================
+
+        if (
+            shipment.status === 'posted' &&
+            bidCount === 0
+        ) {
+
+            await pool.query(
+                `
+                DELETE FROM shipments
+                WHERE id = $1
+                `,
+                [id]
+            )
+
+
+            return res.json({
+
+                message:
+                    'Shipment deleted successfully',
+
+                action:
+                    'deleted'
+
+            })
+
+        }
+
+
+        // ==========================================
+        // POSTED + BIDS
+        // ==========================================
+        //
+        // Do NOT delete because bids/history
+        // should remain in the database.
+        //
+        // Instead mark shipment cancelled.
+        // ==========================================
+
+        if (
+            shipment.status === 'posted'
+        ) {
+
+            await pool.query(
+                `
+                UPDATE shipments
+                SET status = 'cancelled'
+                WHERE id = $1
+                `,
+                [id]
+            )
+
+
+            // ======================================
+            // SOCKET.IO
+            // ======================================
+
+            const io =
+                req.app.get('io')
+
+
+            if (io) {
+
+                io.to(
+                    String(id)
+                ).emit(
+                    'shipment-cancelled',
+                    {
+                        shipmentId: id
+                    }
+                )
+
+            }
+
+
+            return res.json({
+
+                message:
+                    'Shipment cancelled successfully',
+
+                action:
+                    'cancelled'
+
+            })
+
+        }
+
+
+        // ==========================================
+        // ASSIGNED
+        // ==========================================
+        //
+        // Do NOT delete.
+        //
+        // Keep shipment history.
+        // ==========================================
+
+        if (
+            shipment.status === 'assigned'
+        ) {
+
+            await pool.query(
+                `
+                UPDATE shipments
+                SET status = 'cancelled'
+                WHERE id = $1
+                `,
+                [id]
+            )
+
+
+            // ======================================
+            // SOCKET.IO
+            // ======================================
+
+            const io =
+                req.app.get('io')
+
+
+            if (io) {
+
+                io.to(
+                    String(id)
+                ).emit(
+                    'shipment-cancelled',
+                    {
+                        shipmentId: id
+                    }
+                )
+
+            }
+
+
+            return res.json({
+
+                message:
+                    'Shipment cancelled successfully',
+
+                action:
+                    'cancelled'
+
+            })
+
+        }
+
+
+        // ==========================================
+        // OTHER STATUS
+        // ==========================================
+
+        return res.status(400).json({
+
+            error:
+                `Shipment cannot be cancelled in its current status: ${shipment.status}`
+
         })
 
     } catch (err) {
 
         console.error(
-            'Delete shipment error:',
+            'Delete/cancel shipment error:',
             err
         )
 
-        res.status(500).json({
+        return res.status(500).json({
+
             error:
-                err.message
+                err.message ||
+                'Failed to cancel shipment'
+
         })
+
     }
 }
-
-
 // =====================================================
 // EXPORTS
 // =====================================================

@@ -17,13 +17,6 @@ const verifyToken = require('../middleware/auth')
 // =====================================================
 // GET ALL SHIPMENTS
 // =====================================================
-// Shipper:
-//     → sees their own shipments
-//
-// Transporter:
-//     → sees posted shipments
-//     → sees shipments assigned to them
-// =====================================================
 
 router.get(
     '/',
@@ -34,11 +27,6 @@ router.get(
 
 // =====================================================
 // GET ONE SHIPMENT
-// =====================================================
-// Used by ShipmentDetail.jsx
-//
-// Example:
-// GET /shipments/b7351856-f97f-45aa-ba56-84d94882f6cc
 // =====================================================
 
 router.get(
@@ -51,13 +39,6 @@ router.get(
 // =====================================================
 // CREATE SHIPMENT
 // =====================================================
-// SHIPPER ONLY
-//
-// POST /shipments
-//
-// Creates:
-// posted
-// =====================================================
 
 router.post(
     '/',
@@ -68,11 +49,6 @@ router.post(
 
 // =====================================================
 // UPDATE SHIPMENT
-// =====================================================
-//
-// PUT /shipments/:id
-//
-// Used for general shipment updates.
 // =====================================================
 
 router.put(
@@ -85,12 +61,6 @@ router.put(
 // =====================================================
 // DELETE / CANCEL SHIPMENT
 // =====================================================
-//
-// DELETE /shipments/:id
-//
-// Only the shipper who owns the shipment
-// can delete/cancel it.
-// =====================================================
 
 router.delete(
     '/:id',
@@ -102,15 +72,6 @@ router.delete(
 // =====================================================
 // TRANSPORTER MARKS SHIPMENT AS PICKED UP
 // =====================================================
-//
-// assigned
-//     ↓
-// in_transit
-//
-// PUT /shipments/:id/pickup
-//
-// Only the assigned transporter can do this.
-// =====================================================
 
 router.put(
     '/:id/pickup',
@@ -121,31 +82,6 @@ router.put(
 
 // =====================================================
 // SHIPPER CONFIRMS DELIVERY
-// =====================================================
-//
-// in_transit
-//     ↓
-// delivered
-//
-// POST /shipments/:id/complete
-//
-// Body example:
-//
-// {
-//     "delivery_condition": "good",
-//     "delivery_notes": "Goods received safely",
-//     "rating": 5,
-//     "comment": "Very good transporter"
-// }
-//
-// OR:
-//
-// {
-//     "delivery_condition": "damaged",
-//     "delivery_notes": "Two boxes were damaged",
-//     "rating": 3,
-//     "comment": "Delivery was damaged"
-// }
 // =====================================================
 
 router.post(

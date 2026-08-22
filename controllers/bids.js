@@ -57,10 +57,6 @@ const getDashboardBidCount = async (req, res) => {
 
     try {
 
-        // ==================================
-        // CHECK USER
-        // ==================================
-
         if (!req.user || !req.user.id) {
 
             return res.status(401).json({
@@ -69,20 +65,12 @@ const getDashboardBidCount = async (req, res) => {
 
         }
 
-
         let result
 
 
         // ==================================
         // SHIPPER
         // ==================================
-
-        /*
-            For a SHIPPER:
-
-            Count all bids received on
-            shipments belonging to this shipper.
-        */
 
         if (req.user.role === 'shipper') {
 
@@ -103,13 +91,6 @@ const getDashboardBidCount = async (req, res) => {
         // ==================================
         // TRANSPORTER
         // ==================================
-
-        /*
-            For a TRANSPORTER:
-
-            Count all bids placed by
-            this transporter.
-        */
 
         else if (req.user.role === 'transporter') {
 
@@ -137,10 +118,6 @@ const getDashboardBidCount = async (req, res) => {
 
         }
 
-
-        // ==================================
-        // RESPONSE
-        // ==================================
 
         return res.json({
 
@@ -303,6 +280,7 @@ const placeBid = async (req, res) => {
                 FROM bids
                 WHERE shipment_id = $1
                   AND transporter_id = $2
+                  AND status != 'withdrawn'
                 `,
                 [
                     shipment_id,
@@ -417,12 +395,6 @@ const placeBid = async (req, res) => {
             ).emit(
                 'new-bid',
                 newBid
-            )
-
-        } else {
-
-            console.warn(
-                '⚠️ Socket.IO instance not available.'
             )
 
         }
@@ -560,7 +532,7 @@ const acceptBid = async (req, res) => {
 
 
         // ==================================
-        // CHECK STATUS
+        // CHECK SHIPMENT STATUS
         // ==================================
 
         if (
@@ -570,6 +542,22 @@ const acceptBid = async (req, res) => {
             return res.status(400).json({
                 error:
                     'This shipment is no longer accepting bids'
+            })
+
+        }
+
+
+        // ==================================
+        // CHECK BID STATUS
+        // ==================================
+
+        if (
+            bidData.status !== 'pending'
+        ) {
+
+            return res.status(400).json({
+                error:
+                    `This bid is already ${bidData.status}`
             })
 
         }
@@ -599,6 +587,7 @@ const acceptBid = async (req, res) => {
             SET status = 'rejected'
             WHERE shipment_id = $1
               AND id != $2
+              AND status = 'pending'
             `,
             [
                 bidData.shipment_id,
@@ -681,7 +670,232 @@ const acceptBid = async (req, res) => {
 
             error:
                 err.message ||
-                'Failed to place bid'
+                'Failed to accept bid'
+
+        })
+
+    }
+
+}
+
+
+// ========================================
+// WITHDRAW BID
+// ========================================
+//
+// Transporter can withdraw ONLY their
+// own pending bid.
+//
+// pending → withdrawn
+//
+// Accepted/rejected bids cannot be
+// withdrawn.
+// ========================================
+
+const withdrawBid = async (req, res) => {
+
+    try {
+
+        // ==================================
+        // CHECK AUTHENTICATION
+        // ==================================
+
+        if (
+            !req.user ||
+            !req.user.id
+        ) {
+
+            return res.status(401).json({
+                error:
+                    'Authentication required'
+            })
+
+        }
+
+
+        const { id } =
+            req.params
+
+
+        // ==================================
+        // GET BID
+        // ==================================
+
+        const result =
+            await pool.query(
+                `
+                SELECT *
+                FROM bids
+                WHERE id = $1
+                `,
+                [id]
+            )
+
+
+        if (
+            result.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                error:
+                    'Bid not found'
+            })
+
+        }
+
+
+        const bid =
+            result.rows[0]
+
+
+        // ==================================
+        // ONLY TRANSPORTER WHO PLACED BID
+        // ==================================
+
+        if (
+            String(bid.transporter_id) !==
+            String(req.user.id)
+        ) {
+
+            return res.status(403).json({
+                error:
+                    'You can only withdraw your own bid'
+            })
+
+        }
+
+
+        // ==================================
+        // ONLY PENDING BIDS
+        // ==================================
+
+        if (
+            bid.status !== 'pending'
+        ) {
+
+            return res.status(400).json({
+                error:
+                    `You cannot withdraw a ${bid.status} bid`
+            })
+
+        }
+
+
+        // ==================================
+        // CHECK SHIPMENT
+        // ==================================
+
+        const shipmentResult =
+            await pool.query(
+                `
+                SELECT *
+                FROM shipments
+                WHERE id = $1
+                `,
+                [bid.shipment_id]
+            )
+
+
+        if (
+            shipmentResult.rows.length === 0
+        ) {
+
+            return res.status(404).json({
+                error:
+                    'Shipment not found'
+            })
+
+        }
+
+
+        const shipment =
+            shipmentResult.rows[0]
+
+
+        // ==================================
+        // SHIPMENT MUST STILL BE POSTED
+        // ==================================
+
+        if (
+            shipment.status !== 'posted'
+        ) {
+
+            return res.status(400).json({
+                error:
+                    'This shipment is no longer accepting bid withdrawals'
+            })
+
+        }
+
+
+        // ==================================
+        // WITHDRAW BID
+        // ==================================
+
+        const updated =
+            await pool.query(
+                `
+                UPDATE bids
+                SET status = 'withdrawn'
+                WHERE id = $1
+                RETURNING *
+                `,
+                [id]
+            )
+
+
+        // ==================================
+        // SOCKET.IO
+        // ==================================
+
+        const io =
+            req.app.get('io')
+
+
+        if (io) {
+
+            io.to(
+                String(
+                    bid.shipment_id
+                )
+            ).emit(
+                'bid-withdrawn',
+                {
+                    bidId: id,
+                    shipmentId:
+                        bid.shipment_id
+                }
+            )
+
+        }
+
+
+        // ==================================
+        // RESPONSE
+        // ==================================
+
+        return res.json({
+
+            message:
+                'Bid withdrawn successfully',
+
+            bid:
+                updated.rows[0]
+
+        })
+
+    } catch (err) {
+
+        console.error(
+            'Withdraw bid error:',
+            err
+        )
+
+        return res.status(500).json({
+
+            error:
+                err.message ||
+                'Failed to withdraw bid'
 
         })
 
@@ -702,6 +916,8 @@ module.exports = {
 
     placeBid,
 
-    acceptBid
+    acceptBid,
+
+    withdrawBid
 
 }

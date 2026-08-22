@@ -9,24 +9,14 @@ const {
     getBids,
     getDashboardBidCount,
     placeBid,
-    acceptBid
+    acceptBid,
+    withdrawBid
 } = require('../controllers/bids')
 
 
 // ========================================
 // DASHBOARD BID COUNT
 // ========================================
-
-/*
-    IMPORTANT:
-
-    This route MUST come before:
-
-        /:shipmentId
-
-    Otherwise "dashboard" could be treated
-    as a shipmentId.
-*/
 
 router.get(
     '/dashboard/count',
@@ -65,6 +55,31 @@ router.put(
     '/:id/accept',
     verifyToken,
     acceptBid
+)
+
+
+// ========================================
+// WITHDRAW BID
+// ========================================
+//
+// Transporter can withdraw their own
+// pending bid.
+//
+// PUT /bids/:id/withdraw
+//
+// Allowed:
+// pending → withdrawn
+//
+// Not allowed:
+// accepted → withdrawn
+// rejected → withdrawn
+// already withdrawn → withdrawn
+// ========================================
+
+router.put(
+    '/:id/withdraw',
+    verifyToken,
+    withdrawBid
 )
 
 
