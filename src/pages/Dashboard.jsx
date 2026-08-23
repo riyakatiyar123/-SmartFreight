@@ -913,15 +913,14 @@ const Dashboard = () => {
 
                     <div>
 
-                        <h1>
+                       <h1>
+    Welcome back,{' '}
 
-                            Welcome back,{' '}
-
-                            {user.name || 'there'}
-
-                            {' '}👋
-
-                        </h1>
+    {user.name
+        ? user.name.charAt(0).toUpperCase() +
+          user.name.slice(1).toLowerCase()
+        : 'there'}
+</h1>
 
 
                         <p>
@@ -1227,25 +1226,18 @@ const Dashboard = () => {
                         </div>
 
 
-                        {user.role ===
-                            'shipper' &&
-                            activeFilter !==
-                            'bids' && (
+                        {user.role === 'shipper' && (
 
-                            <button
-                                className="post-btn"
-                                onClick={() =>
-                                    navigate(
-                                        '/shipments/new'
-                                    )
-                                }
-                            >
+    <button
+        className="post-btn"
+        onClick={() =>
+            navigate('/shipments/new')
+        }
+    >
+        + Post Shipment
+    </button>
 
-                                + Post Shipment
-
-                            </button>
-
-                        )}
+)}
 
                     </div>
 

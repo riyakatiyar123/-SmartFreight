@@ -1,35 +1,58 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import "../styles/Navbar.css";
 
 const Navbar = () => {
-
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check if user is logged in
-  const isLoggedIn = !!localStorage.getItem("token");
+  // Track login status
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("token")
+  );
+
+  // Update login status when the route changes
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("token"));
+  }, [location.pathname]);
 
   // Logout function
   const handleLogout = () => {
-
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    navigate("/login");
+    setIsLoggedIn(false);
+
+    navigate("/");
   };
+
+  // Pages where "Join Us" should be shown
+  const publicPages = [
+    "/",
+    "/about",
+    "/contact",
+    "/learn-more",
+  ];
+
+  // Pages where no button should be shown
+  const authPages = [
+    "/login",
+    "/register",
+  ];
+
+  const isPublicPage = publicPages.includes(location.pathname);
+  const isAuthPage = authPages.includes(location.pathname);
 
   return (
     <nav className="navbar">
 
       {/* LOGO */}
       <Link to="/" className="logo">
-
         <span className="logo-symbol">»</span>
 
         <span>
           SMART<span>FREIGHT</span>
         </span>
-
       </Link>
 
 
@@ -69,24 +92,27 @@ const Navbar = () => {
 
       {/* JOIN / LOGOUT BUTTON */}
 
-      {isLoggedIn ? (
-
-        <button
-          className="join-nav-btn"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-
-      ) : (
-
+      {isAuthPage ? null : isPublicPage ? (
         <Link
           to="/login"
           className="join-nav-btn"
         >
           Join Us
         </Link>
-
+      ) : isLoggedIn ? (
+        <button
+          className="join-nav-btn"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      ) : (
+        <Link
+          to="/login"
+          className="join-nav-btn"
+        >
+          Join Us
+        </Link>
       )}
 
     </nav>
