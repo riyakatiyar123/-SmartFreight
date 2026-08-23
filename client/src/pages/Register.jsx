@@ -24,15 +24,29 @@ const Register = () => {
     const navigate = useNavigate()
 
 
+    // ========================================
+    // HANDLE INPUT CHANGE
+    // ========================================
+
     const handleChange = (e) => {
+
+        const { name, value } = e.target
 
         setForm({
             ...form,
-            [e.target.name]: e.target.value
+            [name]: value
         })
 
+        // Remove old error while user is correcting input
+        if (error) {
+            setError('')
+        }
     }
 
+
+    // ========================================
+    // HANDLE ROLE CHANGE
+    // ========================================
 
     const handleRoleChange = (role) => {
 
@@ -41,51 +55,324 @@ const Register = () => {
             role
         })
 
+        setError('')
     }
 
+
+    // ========================================
+    // FRONTEND VALIDATION
+    // ========================================
+
+    const validateForm = () => {
+
+        const name = form.name.trim()
+        const email = form.email.trim()
+        const password = form.password
+        const phone = form.phone.trim()
+
+
+        // NAME
+        if (!name) {
+            return 'Full name is required.'
+        }
+
+        if (name.length < 2) {
+            return 'Full name must contain at least 2 characters.'
+        }
+
+
+        // EMAIL
+        if (!email) {
+            return 'Email address is required.'
+        }
+
+        const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+        if (!emailRegex.test(email)) {
+            return 'Please enter a valid email address.'
+        }
+
+
+        // PASSWORD
+        if (!password) {
+            return 'Password is required.'
+        }
+
+        if (password.length < 6) {
+            return 'Password must be at least 6 characters.'
+        }
+
+
+        // PHONE
+        if (!phone) {
+            return 'Phone number is required.'
+        }
+
+        // Remove spaces, +91, hyphens etc.
+        const cleanedPhone =
+            phone.replace(/\D/g, '')
+
+        if (cleanedPhone.length !== 10) {
+            return 'Phone number must be exactly 10 digits.'
+        }
+
+
+        // ========================================
+        // TRANSPORTER VALIDATION
+        // ========================================
+
+        if (form.role === 'transporter') {
+
+            const truckNumber =
+                form.truck_number.trim()
+
+            if (!truckNumber) {
+                return 'Truck registration number is required.'
+            }
+
+
+            // Basic Indian vehicle registration format
+            const truckRegex =
+                /^[A-Z]{2}[- ]?\d{1,2}[- ]?[A-Z]{1,3}[- ]?\d{1,4}$/i
+
+            if (!truckRegex.test(truckNumber)) {
+                return 'Please enter a valid truck registration number, e.g. KA-01-AB-1234.'
+            }
+
+
+            // TRUCK CAPACITY
+
+            if (!form.truck_capacity_kg) {
+                return 'Truck carrying capacity is required.'
+            }
+
+            const capacity =
+                Number(form.truck_capacity_kg)
+
+            if (!Number.isFinite(capacity) || capacity <= 0) {
+                return 'Truck capacity must be greater than 0 kg.'
+            }
+
+
+            // MILEAGE
+
+            if (!form.mileage_kmpl) {
+                return 'Fuel mileage is required.'
+            }
+
+            const mileage =
+                Number(form.mileage_kmpl)
+
+            if (
+                !Number.isFinite(mileage) ||
+                mileage < 2 ||
+                mileage > 10
+            ) {
+                return 'Fuel mileage must be between 2 and 10 km/L.'
+            }
+
+        }
+
+
+        return null
+    }
+
+
+    // ========================================
+    // HANDLE SUBMIT
+    // ========================================
 
     const handleSubmit = async (e) => {
 
         e.preventDefault()
 
         setError('')
+
+
+        // ========================================
+        // VALIDATE BEFORE API REQUEST
+        // ========================================
+
+        const validationError =
+            validateForm()
+
+        if (validationError) {
+
+            setError(validationError)
+
+            return
+        }
+
+
         setIsLoading(true)
+
 
         try {
 
             const response = await api.post(
                 '/auth/register',
-                form
+                {
+                    ...form,
+                    name: form.name.trim(),
+                    email: form.email.trim().toLowerCase(),
+                    phone: form.phone.replace(/\D/g, '')
+                }
             )
+
 
             console.log(
                 'REGISTER RESPONSE:',
                 response.data
             )
 
-            localStorage.setItem(
-                'token',
-                response.data.token
-            )
 
-            localStorage.setItem(
-                'user',
-                JSON.stringify(response.data.user)
-            )
+            // ========================================
+            // SAVE LOGIN INFORMATION
+            // ========================================
+
+            if (response.data.token) {
+
+                localStorage.setItem(
+                    'token',
+                    response.data.token
+                )
+            }
+
+
+            if (response.data.user) {
+
+                localStorage.setItem(
+                    'user',
+                    JSON.stringify(
+                        response.data.user
+                    )
+                )
+            }
+
+
+            // ========================================
+            // REDIRECT
+            // ========================================
 
             navigate('/dashboard')
 
+
         } catch (err) {
 
-            setError(
-                err.response?.data?.error ||
-                'Registration failed. Please try again.'
+            console.error(
+                'REGISTRATION ERROR:',
+                err
             )
+
+
+            // ========================================
+            // SERVER ERROR
+            // ========================================
+
+            const status =
+                err.response?.status
+
+            const serverError =
+                err.response?.data?.error
+
+
+            if (serverError) {
+
+                // Handle common backend messages
+                const message =
+                    serverError.toLowerCase()
+
+
+                if (
+                    message.includes('duplicate') ||
+                    message.includes('already exists') ||
+                    message.includes('already registered') ||
+                    message.includes('unique')
+                ) {
+
+                    setError(
+                        'This email is already registered.'
+                    )
+
+                } else if (
+                    message.includes('email')
+                ) {
+
+                    setError(
+                        'Please enter a valid email address.'
+                    )
+
+                } else if (
+                    message.includes('password')
+                ) {
+
+                    setError(
+                        'Password must be at least 6 characters.'
+                    )
+
+                } else if (
+                    message.includes('phone')
+                ) {
+
+                    setError(
+                        'Please enter a valid 10-digit phone number.'
+                    )
+
+                } else {
+
+                    // If backend already gives a useful
+                    // message, display it.
+                    setError(serverError)
+                }
+
+
+            } else if (status === 400) {
+
+                setError(
+                    'Please check your information and try again.'
+                )
+
+
+            } else if (status === 401) {
+
+                setError(
+                    'Registration request was not authorized.'
+                )
+
+
+            } else if (status === 409) {
+
+                setError(
+                    'This email is already registered.'
+                )
+
+
+            } else if (status >= 500) {
+
+                setError(
+                    'Server error during registration. Please try again.'
+                )
+
+
+            } else if (err.request) {
+
+                setError(
+                    'Unable to connect to the server. Please check your internet connection.'
+                )
+
+
+            } else {
+
+                setError(
+                    'Something went wrong. Please try again.'
+                )
+            }
+
 
         } finally {
 
             setIsLoading(false)
-
         }
 
     }
@@ -100,7 +387,9 @@ const Register = () => {
 
                 <div className="auth-box register-box">
 
-                    {/* HEADER */}
+                    {/* ========================================
+                        HEADER
+                    ======================================== */}
 
                     <div className="auth-header">
 
@@ -122,21 +411,35 @@ const Register = () => {
                     </div>
 
 
-                    {/* ERROR */}
+                    {/* ========================================
+                        ERROR MESSAGE
+                    ======================================== */}
 
                     {error && (
-                        <div className="auth-error">
+
+                        <div
+                            className="auth-error"
+                            role="alert"
+                        >
                             {error}
                         </div>
+
                     )}
 
+
+                    {/* ========================================
+                        FORM
+                    ======================================== */}
 
                     <form
                         className="auth-form"
                         onSubmit={handleSubmit}
+                        noValidate
                     >
 
-                        {/* ROLE */}
+                        {/* ====================================
+                            ROLE
+                        ==================================== */}
 
                         <div className="form-group">
 
@@ -208,7 +511,9 @@ const Register = () => {
                         </div>
 
 
-                        {/* NAME */}
+                        {/* ====================================
+                            NAME
+                        ==================================== */}
 
                         <div className="form-group">
 
@@ -223,13 +528,14 @@ const Register = () => {
                                 placeholder="Rahul Sharma"
                                 value={form.name}
                                 onChange={handleChange}
-                                required
                             />
 
                         </div>
 
 
-                        {/* EMAIL */}
+                        {/* ====================================
+                            EMAIL
+                        ==================================== */}
 
                         <div className="form-group">
 
@@ -244,13 +550,14 @@ const Register = () => {
                                 placeholder="rahul@gmail.com"
                                 value={form.email}
                                 onChange={handleChange}
-                                required
                             />
 
                         </div>
 
 
-                        {/* PASSWORD */}
+                        {/* ====================================
+                            PASSWORD
+                        ==================================== */}
 
                         <div className="form-group">
 
@@ -265,14 +572,14 @@ const Register = () => {
                                 placeholder="Minimum 6 characters"
                                 value={form.password}
                                 onChange={handleChange}
-                                minLength={6}
-                                required
                             />
 
                         </div>
 
 
-                        {/* PHONE */}
+                        {/* ====================================
+                            PHONE
+                        ==================================== */}
 
                         <div className="form-group">
 
@@ -287,13 +594,14 @@ const Register = () => {
                                 placeholder="9876543210"
                                 value={form.phone}
                                 onChange={handleChange}
-                                required
                             />
 
                         </div>
 
 
-                        {/* TRANSPORTER DETAILS */}
+                        {/* ====================================
+                            TRANSPORTER DETAILS
+                        ==================================== */}
 
                         {form.role === 'transporter' && (
 
@@ -335,7 +643,6 @@ const Register = () => {
                                         placeholder="KA-01-AB-1234"
                                         value={form.truck_number}
                                         onChange={handleChange}
-                                        required
                                     />
 
                                 </div>
@@ -354,7 +661,6 @@ const Register = () => {
                                         name="truck_type"
                                         value={form.truck_type}
                                         onChange={handleChange}
-                                        required
                                     >
 
                                         <option value="mini">
@@ -392,11 +698,8 @@ const Register = () => {
                                         type="number"
                                         min="1"
                                         placeholder="e.g. 8000"
-                                        value={
-                                            form.truck_capacity_kg
-                                        }
+                                        value={form.truck_capacity_kg}
                                         onChange={handleChange}
-                                        required
                                     />
 
                                 </div>
@@ -407,10 +710,13 @@ const Register = () => {
                                 <div className="form-group">
 
                                     <label htmlFor="mileage_kmpl">
+
                                         Fuel Mileage
+
                                         <span className="label-hint">
                                             Typical: 3–6 km/L
                                         </span>
+
                                     </label>
 
                                     <input
@@ -423,17 +729,18 @@ const Register = () => {
                                         placeholder="4.0"
                                         value={form.mileage_kmpl}
                                         onChange={handleChange}
-                                        required
                                     />
 
                                 </div>
 
 
-                                {/* MILEAGE WARNING */}
+                                {/* WARNING */}
 
                                 <div className="truck-warning">
 
-                                    <span>⚠️</span>
+                                    <span>
+                                        ⚠️
+                                    </span>
 
                                     <p>
                                         Please enter realistic mileage.
@@ -449,7 +756,9 @@ const Register = () => {
                         )}
 
 
-                        {/* SUBMIT */}
+                        {/* ====================================
+                            SUBMIT
+                        ==================================== */}
 
                         <button
                             type="submit"
@@ -463,7 +772,9 @@ const Register = () => {
                             }
 
                             {!isLoading && (
-                                <span>→</span>
+                                <span>
+                                    →
+                                </span>
                             )}
 
                         </button>
@@ -471,7 +782,9 @@ const Register = () => {
                     </form>
 
 
-                    {/* LOGIN */}
+                    {/* ========================================
+                        LOGIN
+                    ======================================== */}
 
                     <p className="auth-switch">
 
