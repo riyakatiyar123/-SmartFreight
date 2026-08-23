@@ -3087,66 +3087,330 @@ const handleWithdrawBid = async bidId => {
                     )
                 }
 
+{/* ==================================
+    DELIVERY COMPLETED
+================================== */}
 
-                {/* ==================================
-                    DELIVERY COMPLETED
-                ================================== */}
+{
+    shipment.status === 'delivered' &&
+    (
+
+        <section
+            style={{
+                background: '#edf7ef',
+                border: '1px solid #b8d5bc',
+                borderRadius: 16,
+                padding: '32px 28px',
+                marginBottom: 28,
+                textAlign: 'center',
+                boxShadow:
+                    '0 4px 18px rgba(64, 93, 66, 0.08)'
+            }}
+        >
+
+            {/* SUCCESS ICON */}
+
+            <div
+                style={{
+                    width: 64,
+                    height: 64,
+                    margin: '0 auto 16px',
+                    borderRadius: '18px',
+                    background: '#dcebdc',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 34,
+                    color: '#4f704f',
+                    fontWeight: 800
+                }}
+            >
+                ✓
+            </div>
+
+
+            {/* TITLE */}
+
+            <h2
+                style={{
+                    margin: '0 0 8px',
+                    color: '#4f704f',
+                    fontSize: 28,
+                    fontWeight: 800
+                }}
+            >
+                Your Goods Have Been Delivered
+            </h2>
+
+
+            <p
+                style={{
+                    margin: '0 auto 24px',
+                    maxWidth: 540,
+                    color: '#647069',
+                    fontSize: 15,
+                    lineHeight: 1.6
+                }}
+            >
+                The shipment has been successfully delivered and
+                confirmed. Thank you for using SmartFreight.
+            </p>
+
+
+            {/* DELIVERY SUMMARY */}
+
+            <div
+                style={{
+                    maxWidth: 620,
+                    margin: '0 auto',
+                    background: '#ffffff',
+                    border: '1px solid #d9e4da',
+                    borderRadius: 14,
+                    padding: '24px',
+                    textAlign: 'left'
+                }}
+            >
+
+                <h3
+                    style={{
+                        margin: '0 0 18px',
+                        color: '#202521',
+                        fontSize: 18,
+                        fontWeight: 800
+                    }}
+                >
+                    Delivery Summary
+                </h3>
+
+
+                {/* ROUTE */}
+
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        gap: 20,
+                        paddingBottom: 16,
+                        borderBottom: '1px solid #e5ebe5'
+                    }}
+                >
+
+                    <div>
+                        <span
+                            style={{
+                                display: 'block',
+                                color: '#8a958d',
+                                fontSize: 12,
+                                marginBottom: 5
+                            }}
+                        >
+                            Route
+                        </span>
+
+                        <strong
+                            style={{
+                                color: '#202521',
+                                fontSize: 15
+                            }}
+                        >
+                            {formatCityName(shipment.from_city)}
+                            {' → '}
+                            {formatCityName(shipment.to_city)}
+                        </strong>
+                    </div>
+
+
+                    <div style={{ textAlign: 'right' }}>
+
+                        <span
+                            style={{
+                                display: 'block',
+                                color: '#8a958d',
+                                fontSize: 12,
+                                marginBottom: 5
+                            }}
+                        >
+                            Status
+                        </span>
+
+                        <strong
+                            style={{
+                                color: '#4f704f',
+                                fontSize: 14
+                            }}
+                        >
+                            ✓ DELIVERED
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                {/* CONDITION */}
+
+                <div
+                    style={{
+                        padding: '16px 0',
+                        borderBottom: '1px solid #e5ebe5'
+                    }}
+                >
+
+                    <span
+                        style={{
+                            display: 'block',
+                            color: '#8a958d',
+                            fontSize: 12,
+                            marginBottom: 5
+                        }}
+                    >
+                        Delivery Condition
+                    </span>
+
+                    <strong
+                        style={{
+                            color: '#202521',
+                            fontSize: 15
+                        }}
+                    >
+                        {
+                            shipment.delivery_condition === 'damaged'
+                                ? '⚠️ Damaged'
+                                : shipment.delivery_condition === 'partially_damaged'
+                                    ? '⚠️ Partially Damaged'
+                                    : shipment.delivery_condition === 'missing'
+                                        ? '❌ Missing Items'
+                                        : '✓ Good — Everything received safely'
+                        }
+                    </strong>
+
+                </div>
+
+
+                {/* RATING */}
+
+                <div
+                    style={{
+                        padding: '18px 0',
+                        borderBottom: '1px solid #e5ebe5',
+                        textAlign: 'center'
+                    }}
+                >
+
+                    <span
+                        style={{
+                            display: 'block',
+                            color: '#8a958d',
+                            fontSize: 12,
+                            marginBottom: 8
+                        }}
+                    >
+                        Your Rating
+                    </span>
+
+
+                    <div
+                        style={{
+                            fontSize: 30,
+                            letterSpacing: 3,
+                            color: '#d99b21',
+                            marginBottom: 6
+                        }}
+                    >
+
+                        {
+                            [1, 2, 3, 4, 5].map(star => (
+                                <span key={star}>
+                                    {
+                                        star <=
+                                        Number(
+                                            shipment.rating ??
+                                            shipment.delivery_rating ??
+                                            deliveryRating ??
+                                            5
+                                        )
+                                            ? '★'
+                                            : '☆'
+                                    }
+                                </span>
+                            ))
+                        }
+
+                    </div>
+
+
+                    <strong
+                        style={{
+                            color: '#4f704f',
+                            fontSize: 15
+                        }}
+                    >
+                        {
+                            Number(
+                                shipment.rating ??
+                                shipment.delivery_rating ??
+                                deliveryRating ??
+                                5
+                            )
+                        } / 5
+                    </strong>
+
+                </div>
+
+
+                {/* NOTES */}
 
                 {
-                    shipment.status === 'delivered' &&
+                    (
+                        shipment.delivery_notes ||
+                        shipment.comment ||
+                        shipment.delivery_comment
+                    ) &&
                     (
 
                         <div
                             style={{
-                                background: '#edf7ef',
-                                border:
-                                    '1px solid #b8d5bc',
-                                borderRadius: 14,
-                                padding: 28,
-                                marginBottom: 24,
-                                textAlign: 'center'
+                                paddingTop: 16
                             }}
                         >
 
-                            <div
+                            <span
                                 style={{
-                                    width: 58,
-                                    height: 58,
-                                    margin: '0 auto 12px',
-                                    borderRadius: 16,
-                                    background: '#dcebdc',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: 30
+                                    display: 'block',
+                                    color: '#8a958d',
+                                    fontSize: 12,
+                                    marginBottom: 5
                                 }}
                             >
-                                ✓
-                            </div>
-
-                            <h2
-                                style={{
-                                    color: '#4f704f',
-                                    margin: '0 0 8px',
-                                    fontSize: 24
-                                }}
-                            >
-                                Delivery Completed
-                            </h2>
+                                Feedback
+                            </span>
 
                             <p
                                 style={{
-                                    color: '#647069',
-                                    margin: 0
+                                    margin: 0,
+                                    color: '#202521',
+                                    fontSize: 14,
+                                    lineHeight: 1.5
                                 }}
                             >
-                                This shipment was successfully delivered and confirmed by the shipper.
+                                {
+                                    shipment.comment ||
+                                    shipment.delivery_comment ||
+                                    shipment.delivery_notes
+                                }
                             </p>
 
                         </div>
 
                     )
                 }
+
+            </div>
+
+        </section>
+
+    )
+}
 
 
                 {/* ==================================
