@@ -6,6 +6,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Track login status
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("token")
   );
@@ -13,11 +14,13 @@ const Navbar = () => {
   // Mobile menu state
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Update login status when route changes
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
     setMenuOpen(false);
   }, [location.pathname]);
 
+  // Logout function
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -28,6 +31,7 @@ const Navbar = () => {
     navigate("/");
   };
 
+  // Pages where Join Us should be shown
   const publicPages = [
     "/",
     "/about",
@@ -35,6 +39,7 @@ const Navbar = () => {
     "/learn-more",
   ];
 
+  // Pages where no Join Us / Logout button should be shown
   const authPages = [
     "/login",
     "/register",
@@ -49,9 +54,9 @@ const Navbar = () => {
   return (
     <nav className="navbar">
 
-      {/* =========================
+      {/* ==================================================
           LOGO
-      ========================== */}
+      ================================================== */}
 
       <Link to="/" className="logo">
         <span className="logo-symbol">»</span>
@@ -62,10 +67,9 @@ const Navbar = () => {
       </Link>
 
 
-      {/* =========================
+      {/* ==================================================
           DESKTOP NAVIGATION
-          DO NOT CHANGE
-      ========================== */}
+      ================================================== */}
 
       <div className="nav-links">
 
@@ -100,9 +104,9 @@ const Navbar = () => {
       </div>
 
 
-      {/* =========================
-          DESKTOP JOIN / LOGOUT
-      ========================== */}
+      {/* ==================================================
+          DESKTOP JOIN / LOGOUT BUTTON
+      ================================================== */}
 
       {isAuthPage ? null : isPublicPage ? (
         <Link
@@ -129,8 +133,9 @@ const Navbar = () => {
 
 
       {/* ==================================================
-          MOBILE HOME NAVIGATION
-          Only visible on mobile
+          MOBILE HOME
+          
+          Logo + Join Us
       ================================================== */}
 
       {isHomePage && (
@@ -148,17 +153,25 @@ const Navbar = () => {
 
 
       {/* ==================================================
-          MOBILE HAMBURGER
-          Used on dashboard / internal pages
+          MOBILE INTERNAL PAGES
+          
+          Logo + Hamburger
+          
+          Home page does NOT show hamburger.
       ================================================== */}
 
       {!isHomePage && !isAuthPage && (
         <button
+          type="button"
           className={`mobile-menu-btn ${
             menuOpen ? "open" : ""
           }`}
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Open navigation menu"
+          onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label={
+            menuOpen
+              ? "Close navigation menu"
+              : "Open navigation menu"
+          }
           aria-expanded={menuOpen}
         >
           <span></span>
@@ -170,9 +183,11 @@ const Navbar = () => {
 
       {/* ==================================================
           MOBILE HOME QUICK LINKS
-
-          Home page:
+          
           About Us | Contact Us | Learn More
+          
+          Home itself is NOT included because
+          the user is already on Home.
       ================================================== */}
 
       {isHomePage && (
@@ -195,9 +210,8 @@ const Navbar = () => {
 
 
       {/* ==================================================
-          MOBILE HAMBURGER MENU
-
-          Dashboard/internal pages:
+          MOBILE INTERNAL MENU
+          
           Home
           About Us
           Contact Us
@@ -208,13 +222,22 @@ const Navbar = () => {
       {!isHomePage && !isAuthPage && menuOpen && (
         <div className="mobile-dropdown-menu">
 
+          {/* HOME */}
+
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
-            className={location.pathname === "/" ? "active" : ""}
+            className={
+              location.pathname === "/"
+                ? "active"
+                : ""
+            }
           >
             Home
           </Link>
+
+
+          {/* ABOUT US */}
 
           <Link
             to="/about"
@@ -228,6 +251,9 @@ const Navbar = () => {
             About Us
           </Link>
 
+
+          {/* CONTACT US */}
+
           <Link
             to="/contact"
             onClick={() => setMenuOpen(false)}
@@ -239,6 +265,9 @@ const Navbar = () => {
           >
             Contact Us
           </Link>
+
+
+          {/* LEARN MORE */}
 
           <Link
             to="/learn-more"
@@ -253,10 +282,11 @@ const Navbar = () => {
           </Link>
 
 
-          {/* Join / Logout */}
+          {/* JOIN US / LOGOUT */}
 
           {isLoggedIn ? (
             <button
+              type="button"
               className="mobile-menu-logout"
               onClick={handleLogout}
             >

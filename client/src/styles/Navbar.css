@@ -157,38 +157,18 @@
 
 
 /* =========================================
-   MOBILE
+   MOBILE-ONLY ELEMENTS
+   Hidden on laptop / desktop
 ========================================= */
 
-@media (max-width: 800px) {
-
-  .navbar {
-    height: 80px;
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
-  .logo-symbol {
-    font-size: 32px;
-  }
-
-  .nav-links {
-    display: none;
-  }
-
-  .join-nav-btn {
-    min-width: 90px;
-
-    height: 38px;
-
-    padding: 10px 22px;
-
-    font-size: 14px;
-  }
-
+.mobile-home-actions,
+.mobile-home-links,
+.mobile-menu-btn,
+.mobile-dropdown-menu {
+  display: none;
 }
+
+
 /* =========================================
    MOBILE
 ========================================= */
@@ -228,8 +208,7 @@
 
 
   /* =========================
-     DESKTOP NAV
-     Hidden on mobile
+     HIDE DESKTOP NAV
   ========================= */
 
   .nav-links {
@@ -238,9 +217,7 @@
 
 
   /* =========================
-     DESKTOP JOIN BUTTON
-     Hide because mobile has
-     its own Join Us button
+     HIDE DESKTOP JOIN BUTTON
   ========================= */
 
   .join-nav-btn {
@@ -248,9 +225,9 @@
   }
 
 
-  /* =========================
-     MOBILE JOIN BUTTON
-  ========================= */
+  /* =================================================
+     HOME PAGE — JOIN US
+  ================================================= */
 
   .mobile-home-actions {
     display: flex;
@@ -290,9 +267,9 @@
   }
 
 
-  /* =========================
-     HOME QUICK LINKS
-  ========================= */
+  /* =================================================
+     HOME PAGE — QUICK LINKS
+  ================================================= */
 
   .mobile-home-links {
     display: flex;
@@ -355,9 +332,9 @@
   }
 
 
-  /* =========================
-     HAMBURGER
-  ========================= */
+  /* =================================================
+     DASHBOARD / INTERNAL PAGES — HAMBURGER
+  ================================================= */
 
   .mobile-menu-btn {
     display: flex;
@@ -415,11 +392,13 @@
   }
 
 
-  /* =========================
+  /* =================================================
      MOBILE DROPDOWN MENU
-  ========================= */
+  ================================================= */
 
   .mobile-dropdown-menu {
+    display: block;
+
     position: absolute;
 
     top: 68px;
@@ -479,9 +458,9 @@
   }
 
 
-  /* =========================
+  /* =================================================
      MOBILE JOIN / LOGOUT
-  ========================= */
+  ================================================= */
 
   .mobile-menu-join,
   .mobile-menu-logout {
