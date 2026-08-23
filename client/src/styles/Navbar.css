@@ -189,3 +189,317 @@
   }
 
 }
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 800px) {
+
+  /* =========================
+     NAVBAR
+  ========================= */
+
+  .navbar {
+    height: 68px;
+
+    padding: 0 18px;
+
+    flex-wrap: wrap;
+
+    background: #f7f9f7;
+  }
+
+
+  /* =========================
+     LOGO
+  ========================= */
+
+  .logo {
+    font-size: 19px;
+
+    gap: 6px;
+
+    letter-spacing: -0.6px;
+  }
+
+  .logo-symbol {
+    font-size: 30px;
+  }
+
+
+  /* =========================
+     DESKTOP NAV
+     Hidden on mobile
+  ========================= */
+
+  .nav-links {
+    display: none;
+  }
+
+
+  /* =========================
+     DESKTOP JOIN BUTTON
+     Hide because mobile has
+     its own Join Us button
+  ========================= */
+
+  .join-nav-btn {
+    display: none;
+  }
+
+
+  /* =========================
+     MOBILE JOIN BUTTON
+  ========================= */
+
+  .mobile-home-actions {
+    display: flex;
+
+    align-items: center;
+
+    margin-left: auto;
+  }
+
+  .mobile-join-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    height: 36px;
+
+    padding: 0 17px;
+
+    background: #4f704f;
+
+    color: #ffffff;
+
+    border: 1px solid #4f704f;
+
+    border-radius: 22px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+  }
+
+
+  /* =========================
+     HOME QUICK LINKS
+  ========================= */
+
+  .mobile-home-links {
+    display: flex;
+
+    width: 100%;
+
+    padding: 10px 14px;
+
+    gap: 7px;
+
+    background: #f7f9f7;
+
+    border-bottom: 1px solid #e1e5e1;
+
+    box-sizing: border-box;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+  }
+
+  .mobile-home-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-home-links a {
+    flex: 1;
+
+    min-width: max-content;
+
+    padding: 8px 10px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    color: #3f4b42;
+
+    background: #ffffff;
+
+    border: 1px solid #dce2dc;
+
+    border-radius: 18px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition: 0.2s ease;
+  }
+
+  .mobile-home-links a:active {
+    background: #4f704f;
+
+    color: #ffffff;
+
+    border-color: #4f704f;
+  }
+
+
+  /* =========================
+     HAMBURGER
+  ========================= */
+
+  .mobile-menu-btn {
+    display: flex;
+
+    width: 38px;
+    height: 38px;
+
+    margin-left: auto;
+
+    padding: 8px;
+
+    border: none;
+
+    background: transparent;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 5px;
+
+    cursor: pointer;
+  }
+
+  .mobile-menu-btn span {
+    display: block;
+
+    width: 22px;
+    height: 2px;
+
+    background: #272b28;
+
+    border-radius: 3px;
+
+    transition: 0.25s ease;
+  }
+
+
+  /* =========================
+     HAMBURGER → X
+  ========================= */
+
+  .mobile-menu-btn.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .mobile-menu-btn.open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-btn.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+
+  /* =========================
+     MOBILE DROPDOWN MENU
+  ========================= */
+
+  .mobile-dropdown-menu {
+    position: absolute;
+
+    top: 68px;
+
+    left: 0;
+
+    width: 100%;
+
+    padding: 10px 18px 18px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e1e5e1;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+
+    box-sizing: border-box;
+
+    z-index: 100;
+  }
+
+  .mobile-dropdown-menu a,
+  .mobile-menu-logout {
+    display: block;
+
+    width: 100%;
+
+    padding: 13px 5px;
+
+    background: transparent;
+
+    border: none;
+
+    border-bottom: 1px solid #edf0ed;
+
+    color: #272b28;
+
+    text-decoration: none;
+
+    text-align: left;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    box-sizing: border-box;
+
+    cursor: pointer;
+  }
+
+  .mobile-dropdown-menu a.active {
+    color: #527153;
+
+    font-weight: 700;
+  }
+
+
+  /* =========================
+     MOBILE JOIN / LOGOUT
+  ========================= */
+
+  .mobile-menu-join,
+  .mobile-menu-logout {
+    margin-top: 10px;
+
+    padding: 11px;
+
+    background: #4f704f !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid #4f704f !important;
+
+    border-radius: 22px;
+
+    text-align: center !important;
+
+    font-weight: 600 !important;
+  }
+
+}

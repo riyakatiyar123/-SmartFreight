@@ -1,4 +1,4 @@
-/* =====================================================
+s/* =====================================================
    SMARTFREIGHT HOME PAGE
 ===================================================== */
 
@@ -46,8 +46,14 @@
     object-fit: cover;
 
     object-position: center bottom;
-     z-index: 1;
+
+    z-index: 1;
 }
+
+
+/* =====================================================
+   HERO CONTENT
+===================================================== */
 
 .hero-content {
     position: absolute;
@@ -65,8 +71,7 @@
 }
 
 .hero-tagline {
-
-    margin: 0 0 20px;
+    margin: 0 0 10px;
 
     color: #315a3a;
 
@@ -77,8 +82,6 @@
     letter-spacing: 2.5px;
 
     line-height: 1;
-    margin-bottom: 10px;
-
 }
 
 .hero-content h1 {
@@ -94,15 +97,14 @@
 
     letter-spacing: -2px;
 }
-.hero-content h1 span {
 
+.hero-content h1 span {
     display: block;
 
     color: #3a5c3d;
-
 }
+
 .hero-description {
- 
     margin-top: 10px;
 
     max-width: 700px;
@@ -116,8 +118,9 @@
     line-height: 1.55;
 
     letter-spacing: 0;
-
 }
+
+
 /* =====================================================
    REAL JOIN BUTTON
 ===================================================== */
@@ -184,7 +187,6 @@
     overflow: hidden;
 }
 
-
 .impact-container {
     width: 100%;
 
@@ -247,11 +249,9 @@
     box-sizing: border-box;
 }
 
-
 .impact-item:first-child {
     padding-left: 0;
 }
-
 
 .impact-item:last-child {
     border-right: none;
@@ -296,6 +296,7 @@
 
 /* =====================================================
    LAPTOP
+   Existing desktop behavior preserved
 ===================================================== */
 
 @media (max-width: 1200px) {
@@ -315,7 +316,6 @@
         padding-left: 12px;
         padding-right: 12px;
     }
-
 }
 
 
@@ -346,46 +346,340 @@
 
         padding: 10px;
     }
-
 }
 
 
 /* =====================================================
    MOBILE
+   Completely redesigned for phone
 ===================================================== */
 
 @media (max-width: 600px) {
 
+    /* ---------------------------------------------
+       HOME PAGE
+    --------------------------------------------- */
+
+    .home {
+        height: auto;
+        min-height: 100vh;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        background: #f7f9f7;
+    }
+
+
+    /* ---------------------------------------------
+       HERO
+       
+       IMPORTANT:
+       On mobile the truck is no longer a background
+       behind the text.
+    --------------------------------------------- */
+
     .hero {
-        height: calc(100vh - 60px - 270px);
+        width: 100%;
+
+        height: auto;
+        min-height: 0;
+
+        display: flex;
+
+        flex-direction: column;
+
+        padding: 38px 20px 25px;
+
+        box-sizing: border-box;
+
+        background: #edf1ee;
+
+        overflow: visible;
+
+        line-height: normal;
+    }
+
+
+    /* ---------------------------------------------
+       HERO CONTENT
+    --------------------------------------------- */
+
+    .hero-content {
+        position: relative;
+
+        top: auto;
+        left: auto;
+
+        transform: none;
+
+        width: 100%;
+
+        z-index: 2;
+    }
+
+
+    /* ---------------------------------------------
+       TAGLINE
+    --------------------------------------------- */
+
+    .hero-tagline {
+        margin: 0 0 15px;
+
+        color: #315a3a;
+
+        font-size: 10px;
+
+        font-weight: 700;
+
+        letter-spacing: 2px;
+
+        line-height: 1.5;
+    }
+
+
+    /* ---------------------------------------------
+       MAIN HEADING
+    --------------------------------------------- */
+
+    .hero-content h1 {
+        margin: 0 0 20px;
+
+        color: #101513;
+
+        font-size: 42px;
+
+        font-weight: 700;
+
+        line-height: 0.98;
+
+        letter-spacing: -2px;
+    }
+
+    .hero-content h1 span {
+        display: block;
+
+        margin-top: 3px;
+
+        color: #3a5c3d;
+    }
+
+
+    /* ---------------------------------------------
+       DESCRIPTION
+    --------------------------------------------- */
+
+    .hero-description {
+        margin: 0;
+
+        max-width: 100%;
+
+        color: #3c433e;
+
+        font-size: 14px;
+
+        font-weight: 400;
+
+        line-height: 1.65;
+    }
+
+
+    /* ---------------------------------------------
+       TRUCK IMAGE
+    --------------------------------------------- */
+
+    .hero-image {
+        position: relative;
+
+        top: auto;
+        left: auto;
+
+        width: 100%;
+        height: auto;
+
+        margin-top: 25px;
+
+        display: block;
+
+        object-fit: contain;
+
+        object-position: center;
+
+        z-index: 1;
+
+        border-radius: 15px;
+    }
+
+
+    /* ---------------------------------------------
+       HIDE DESKTOP IMAGE JOIN OVERLAY
+    --------------------------------------------- */
+
+    .hero-login-button {
+        display: none;
+    }
+
+
+    /* ---------------------------------------------
+       IMPACT SECTION
+    --------------------------------------------- */
+
+    .impact {
+        width: 100%;
+
+        height: auto;
+
+        min-height: 0;
+
+        padding: 35px 20px 40px;
+
+        box-sizing: border-box;
+
+        background: #f7f9f7;
+
+        overflow: visible;
+    }
+
+
+    .impact-container {
+        width: 100%;
+
+        height: auto;
+
+        max-width: none;
+    }
+
+
+    /* ---------------------------------------------
+       IMPACT TITLE
+    --------------------------------------------- */
+
+    .impact-title {
+        margin: 0 0 24px;
+
+        color: #405d42;
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        letter-spacing: 2.5px;
+    }
+
+
+    /* ---------------------------------------------
+       IMPACT GRID
+    --------------------------------------------- */
+
+    .impact-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        width: 100%;
+
+        gap: 0;
+    }
+
+
+    /* ---------------------------------------------
+       IMPACT ITEMS
+    --------------------------------------------- */
+
+    .impact-item {
+        min-height: 105px;
+
+        padding: 18px 14px;
+
+        border-right: 1px solid #d1d6d2;
+
+        border-bottom: 1px solid #d1d6d2;
+
+        box-sizing: border-box;
+    }
+
+
+    /* Remove right border from
+       every second item */
+
+    .impact-item:nth-child(2n) {
+        border-right: none;
+    }
+
+
+    /* ---------------------------------------------
+       IMPACT NUMBER
+    --------------------------------------------- */
+
+    .impact-item h2 {
+        margin: 0 0 8px;
+
+        color: #4f704f;
+
+        font-size: 30px;
+
+        font-weight: 700;
+
+        line-height: 1;
+
+        letter-spacing: -1.5px;
+    }
+
+
+    /* ---------------------------------------------
+       IMPACT TEXT
+    --------------------------------------------- */
+
+    .impact-item p {
+        margin: 0;
+
+        color: #292e2b;
+
+        font-size: 12px;
+
+        font-weight: 400;
+
+        line-height: 1.4;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media (max-width: 390px) {
+
+    .hero {
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .hero-content h1 {
+        font-size: 38px;
+    }
+
+    .hero-description {
+        font-size: 13.5px;
     }
 
     .impact {
-        height: 270px;
-
-        padding: 20px 5%;
-    }
-
-    .impact-grid {
-        grid-template-columns: repeat(2, 1fr);
+        padding-left: 17px;
+        padding-right: 17px;
     }
 
     .impact-item {
-        min-height: 85px;
-
-        padding: 10px;
-
-        border-right: none;
-
-        border-bottom: 1px solid #d1d6d2;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     .impact-item h2 {
-        font-size: 28px;
+        font-size: 27px;
     }
 
     .impact-item p {
-        font-size: 12px;
+        font-size: 11px;
     }
 
 }

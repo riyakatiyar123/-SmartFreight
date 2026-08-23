@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/Home.css";
 
@@ -35,9 +34,10 @@ const Home = () => {
                     </h1>
 
                     <p className="hero-description">
-                        Real-time tracking, intelligent analytics, and seamless
-                        fleet management everything you need to move smarter,
-                        faster, and more efficiently, all in one powerful platform.
+                        Real-time tracking, intelligent analytics, and
+                        seamless fleet management — all in one powerful
+                        platform designed to help you move smarter,
+                        faster, and more efficiently.
                     </p>
 
                 </div>
