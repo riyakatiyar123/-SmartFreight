@@ -49,10 +49,6 @@ CREATE TABLE users (
 );
 
 
--- ==========================================
--- SHIPMENTS
--- ==========================================
-
 CREATE TABLE shipments (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
 
@@ -60,13 +56,31 @@ CREATE TABLE shipments (
 
     to_city VARCHAR(100) NOT NULL,
 
+    pickup_address TEXT,
+
+    delivery_address TEXT,
+
     weight_kg INTEGER NOT NULL,
 
     amount INTEGER NOT NULL,
 
     goods_type VARCHAR(100),
 
+    vehicle_type VARCHAR(100),
+
+    num_packages INTEGER,
+
+    description TEXT,
+
     notes TEXT,
+
+    special_handling TEXT[],
+
+    pickup_date DATE,
+
+    pickup_time TIME,
+
+    delivery_by DATE,
 
     status VARCHAR(20) DEFAULT 'posted'
         CHECK (
@@ -83,13 +97,14 @@ CREATE TABLE shipments (
 
     transporter_id UUID REFERENCES users(id),
 
-    pickup_date DATE,
+    delivery_condition VARCHAR(30),
 
-    delivery_by DATE,
+    delivery_notes TEXT,
+
+    actual_delivery_time TIMESTAMP,
 
     created_at TIMESTAMP DEFAULT NOW()
 );
-
 
 -- ==========================================
 -- BIDS

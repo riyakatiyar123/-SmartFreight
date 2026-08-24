@@ -13,7 +13,7 @@ const PostShipment = () => {
         weight_kg: '',
         amount: '',
         goods_type: '',
-        cargo_value: '',
+        vehicle_type: '',
         num_packages: '',
         description: '',
         notes: '',
@@ -39,6 +39,18 @@ const PostShipment = () => {
         'Keep dry',
         'Handle with care',
         'Do not stack'
+    ]
+
+    // ========================================
+    // VEHICLE / TRUCK TYPE OPTIONS
+    // ========================================
+
+    const vehicleOptions = [
+        'Open Body Truck (14ft / 19ft / 22ft)',
+        'Closed Container (20ft / 32ft SXL/MXL)',
+        'Trailer / Flatbed',
+        'LCV / Mini Truck (Tata Ace / Bolero Pickup)',
+        'Any Suitable Truck'
     ]
 
     // ========================================
@@ -76,7 +88,6 @@ const PostShipment = () => {
         const numericFields = [
             'weight_kg',
             'amount',
-            'cargo_value',
             'num_packages'
         ]
 
@@ -208,6 +219,11 @@ const PostShipment = () => {
             return 'Please select a goods type.'
         }
 
+        // Preferred vehicle
+        if (!form.vehicle_type) {
+            return 'Please select a preferred vehicle / truck type.'
+        }
+
         // Weight
         const weight =
             Number(form.weight_kg)
@@ -230,20 +246,6 @@ const PostShipment = () => {
                 packages <= 0
             ) {
                 return 'Number of packages must be greater than 0.'
-            }
-        }
-
-        // Cargo value
-        if (form.cargo_value !== '') {
-
-            const cargoValue =
-                Number(form.cargo_value)
-
-            if (
-                !Number.isFinite(cargoValue) ||
-                cargoValue <= 0
-            ) {
-                return 'Cargo value must be greater than 0.'
             }
         }
 
@@ -347,11 +349,6 @@ const PostShipment = () => {
 
             amount:
                 Number(form.amount),
-
-            cargo_value:
-                form.cargo_value
-                    ? Number(form.cargo_value)
-                    : null,
 
             num_packages:
                 form.num_packages
@@ -774,7 +771,7 @@ const PostShipment = () => {
                             📦 Cargo Information
                         </p>
 
-                        {/* GOODS + WEIGHT */}
+                        {/* GOODS + VEHICLE TYPE */}
 
                         <div
                             style={{
@@ -783,6 +780,8 @@ const PostShipment = () => {
                                 gap: '16px'
                             }}
                         >
+
+                            {/* GOODS TYPE */}
 
                             <div>
 
@@ -845,6 +844,54 @@ const PostShipment = () => {
 
                             </div>
 
+                            {/* PREFERRED VEHICLE */}
+
+                            <div>
+
+                                <label style={labelStyle}>
+                                    Preferred Vehicle / Truck Type *
+                                </label>
+
+                                <select
+                                    name="vehicle_type"
+                                    value={form.vehicle_type}
+                                    onChange={handleChange}
+                                    style={inputStyle}
+                                >
+
+                                    <option value="">
+                                        Select vehicle type...
+                                    </option>
+
+                                    {vehicleOptions.map(
+                                        option => (
+                                            <option
+                                                key={option}
+                                                value={option}
+                                            >
+                                                {option}
+                                            </option>
+                                        )
+                                    )}
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        {/* WEIGHT + PACKAGES */}
+
+                        <div
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '16px'
+                            }}
+                        >
+
+                            {/* WEIGHT */}
+
                             <div>
 
                                 <label style={labelStyle}>
@@ -864,17 +911,7 @@ const PostShipment = () => {
 
                             </div>
 
-                        </div>
-
-                        {/* PACKAGES + CARGO VALUE */}
-
-                        <div
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '16px'
-                            }}
-                        >
+                            {/* PACKAGES */}
 
                             <div>
 
@@ -889,25 +926,6 @@ const PostShipment = () => {
                                     step="1"
                                     placeholder="120"
                                     value={form.num_packages}
-                                    onChange={handleChange}
-                                    style={inputStyle}
-                                />
-
-                            </div>
-
-                            <div>
-
-                                <label style={labelStyle}>
-                                    Cargo Value (₹)
-                                </label>
-
-                                <input
-                                    name="cargo_value"
-                                    type="number"
-                                    min="1"
-                                    step="1"
-                                    placeholder="500000"
-                                    value={form.cargo_value}
                                     onChange={handleChange}
                                     style={inputStyle}
                                 />
@@ -999,7 +1017,6 @@ const PostShipment = () => {
                                         {option}
 
                                     </button>
-
                                 )
                             })}
 

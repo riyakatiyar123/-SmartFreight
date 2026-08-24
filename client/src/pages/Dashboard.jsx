@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../utils/api'
 import Navbar from '../components/Navbar'
 
-import "../styles/dashboard.css";
+import "../styles/dashboard.css"
 
 
 // ========================================
@@ -913,14 +913,14 @@ const Dashboard = () => {
 
                     <div>
 
-                       <h1>
-    Welcome back,{' '}
+                        <h1>
+                            Welcome back,{' '}
 
-    {user.name
-        ? user.name.charAt(0).toUpperCase() +
-          user.name.slice(1).toLowerCase()
-        : 'there'}
-</h1>
+                            {user.name
+                                ? user.name.charAt(0).toUpperCase() +
+                                  user.name.slice(1).toLowerCase()
+                                : 'there'}
+                        </h1>
 
 
                         <p>
@@ -1224,20 +1224,6 @@ const Dashboard = () => {
                             </p>
 
                         </div>
-
-
-                        {user.role === 'shipper' && (
-
-    <button
-        className="post-btn"
-        onClick={() =>
-            navigate('/shipments/new')
-        }
-    >
-        + Post Shipment
-    </button>
-
-)}
 
                     </div>
 
