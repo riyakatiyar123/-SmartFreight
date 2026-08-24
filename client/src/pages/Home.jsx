@@ -35,7 +35,7 @@ const Home = () => {
 
                     <p className="hero-description">
                         Real-time tracking, intelligent analytics, and
-                        seamless fleet management — all in one powerful
+                        seamless fleet management all in one powerful
                         platform designed to help you move smarter,
                         faster, and more efficiently.
                     </p>
