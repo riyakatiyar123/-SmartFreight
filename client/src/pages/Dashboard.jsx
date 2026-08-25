@@ -1,21 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 import api from '../utils/api'
 import Navbar from '../components/Navbar'
-
 import "../styles/dashboard.css"
-
 
 // ========================================
 // FORMAT LOCATION
 // ========================================
 
 const formatLocation = (location) => {
-
-    if (!location) {
-        return ''
-    }
+    if (!location) return ''
 
     return String(location)
         .toLowerCase()
@@ -25,9 +19,7 @@ const formatLocation = (location) => {
             word.charAt(0).toUpperCase() + word.slice(1)
         )
         .join(' ')
-
 }
-
 
 // ========================================
 // DASHBOARD
@@ -37,41 +29,29 @@ const Dashboard = () => {
 
     const navigate = useNavigate()
 
-
     // ========================================
     // USER
     // ========================================
 
     const [user, setUser] = useState(null)
 
-
     // ========================================
     // STATE
     // ========================================
 
     const [shipments, setShipments] = useState([])
-
     const [bids, setBids] = useState([])
-
     const [isLoading, setIsLoading] = useState(true)
-
     const [isLoadingBids, setIsLoadingBids] = useState(false)
-
     const [error, setError] = useState('')
-
     const [activeFilter, setActiveFilter] = useState('all')
-
 
     // ========================================
     // CANCEL MODAL
     // ========================================
 
-    const [shipmentToCancel, setShipmentToCancel] =
-        useState(null)
-
-    const [isCancelling, setIsCancelling] =
-        useState(false)
-
+    const [shipmentToCancel, setShipmentToCancel] = useState(null)
+    const [isCancelling, setIsCancelling] = useState(false)
 
     // ========================================
     // LOAD USER
@@ -81,59 +61,37 @@ const Dashboard = () => {
 
         try {
 
-            const storedUser =
-                localStorage.getItem('user')
-
+            const storedUser = localStorage.getItem('user')
 
             if (!storedUser) {
-
                 navigate('/login')
-
                 return
-
             }
 
+            const parsedUser = JSON.parse(storedUser)
 
-            const parsedUser =
-                JSON.parse(storedUser)
-
-
-            if (
-                !parsedUser ||
-                !parsedUser.id
-            ) {
+            if (!parsedUser || !parsedUser.id) {
 
                 localStorage.removeItem('user')
-
                 localStorage.removeItem('token')
 
                 navigate('/login')
-
                 return
-
             }
-
 
             setUser(parsedUser)
 
         } catch (err) {
 
-            console.error(
-                'Invalid user data:',
-                err
-            )
-
+            console.error('Invalid user data:', err)
 
             localStorage.removeItem('user')
-
             localStorage.removeItem('token')
 
             navigate('/login')
-
         }
 
     }, [navigate])
-
 
     // ========================================
     // FETCH SHIPMENTS AFTER USER LOADS
@@ -141,14 +99,11 @@ const Dashboard = () => {
 
     useEffect(() => {
 
-        if (!user) {
-            return
-        }
+        if (!user) return
 
         fetchShipments()
 
     }, [user])
-
 
     // ========================================
     // FETCH SHIPMENTS
@@ -159,38 +114,23 @@ const Dashboard = () => {
         try {
 
             setIsLoading(true)
-
             setError('')
 
+            const response = await api.get('/shipments')
 
-            const response =
-                await api.get('/shipments')
+            const data = Array.isArray(response.data)
+                ? response.data
+                : []
 
-
-            const data =
-                Array.isArray(response.data)
-                    ? response.data
-                    : []
-
-
-            console.log(
-                '📦 Shipments:',
-                data
-            )
-
+            console.log('📦 Shipments:', data)
 
             setShipments(data)
-
 
             await fetchBidsForDashboard(data)
 
         } catch (err) {
 
-            console.error(
-                '❌ Shipment error:',
-                err
-            )
-
+            console.error('❌ Shipment error:', err)
 
             setError(
                 err.response?.data?.error ||
@@ -203,198 +143,134 @@ const Dashboard = () => {
             setIsLoading(false)
 
         }
-
     }
-
 
     // ========================================
     // FETCH BIDS
     // ========================================
 
-    const fetchBidsForDashboard =
-        async (shipmentList) => {
+    const fetchBidsForDashboard = async (shipmentList) => {
 
-            try {
+        try {
 
-                setIsLoadingBids(true)
+            setIsLoadingBids(true)
 
+            if (
+                !Array.isArray(shipmentList) ||
+                shipmentList.length === 0
+            ) {
 
-                if (
-                    !Array.isArray(shipmentList) ||
-                    shipmentList.length === 0
-                ) {
-
-                    setBids([])
-
-                    return
-
-                }
-
-
-                const responses =
-                    await Promise.all(
-
-                        shipmentList.map(
-                            async (shipment) => {
-
-                                try {
-
-                                    const response =
-                                        await api.get(
-                                            `/bids/${shipment.id}`
-                                        )
-
-
-                                    const shipmentBids =
-                                        Array.isArray(
-                                            response.data
-                                        )
-                                            ? response.data
-                                            : []
-
-
-                                    return shipmentBids.map(
-                                        (bid) => ({
-
-                                            ...bid,
-
-                                            from_city:
-                                                shipment.from_city,
-
-                                            to_city:
-                                                shipment.to_city,
-
-                                            shipment_amount:
-                                                shipment.amount,
-
-                                            shipment_status:
-                                                shipment.status
-
-                                        })
-                                    )
-
-                                } catch (err) {
-
-                                    console.error(
-                                        `Failed to fetch bids for shipment ${shipment.id}:`,
-                                        err
-                                    )
-
-                                    return []
-
-                                }
-
-                            }
-                        )
-
-                    )
-
-
-                let allBids =
-                    responses.flat()
-
-
-                // ==================================
-                // TRANSPORTER
-                // ==================================
-
-                if (
-                    user?.role ===
-                    'transporter'
-                ) {
-
-                    allBids =
-                        allBids.filter(
-                            (bid) =>
-                                String(
-                                    bid.transporter_id
-                                ) ===
-                                String(
-                                    user.id
-                                )
-                        )
-
-                }
-
-
-                console.log(
-                    '💰 Dashboard bids:',
-                    allBids
-                )
-
-
-                setBids(allBids)
-
-            } catch (err) {
-
-                console.error(
-                    '❌ Bid loading error:',
-                    err
-                )
-
-
-                setError(
-                    err.response?.data?.error ||
-                    err.message ||
-                    'Failed to load bids'
-                )
-
-            } finally {
-
-                setIsLoadingBids(false)
-
+                setBids([])
+                return
             }
 
-        }
+            const responses = await Promise.all(
 
+                shipmentList.map(async (shipment) => {
+
+                    try {
+
+                        const response =
+                            await api.get(`/bids/${shipment.id}`)
+
+                        const shipmentBids =
+                            Array.isArray(response.data)
+                                ? response.data
+                                : []
+
+                        return shipmentBids.map(bid => ({
+
+                            ...bid,
+
+                            from_city:
+                                shipment.from_city,
+
+                            to_city:
+                                shipment.to_city,
+
+                            shipment_amount:
+                                shipment.amount,
+
+                            shipment_status:
+                                shipment.status
+
+                        }))
+
+                    } catch (err) {
+
+                        console.error(
+                            `Failed to fetch bids for shipment ${shipment.id}:`,
+                            err
+                        )
+
+                        return []
+                    }
+                })
+            )
+
+            let allBids = responses.flat()
+
+            // ==================================
+            // TRANSPORTER
+            // ==================================
+
+            if (user?.role === 'transporter') {
+
+                allBids = allBids.filter(
+                    bid =>
+                        String(bid.transporter_id) ===
+                        String(user.id)
+                )
+            }
+
+            console.log('💰 Dashboard bids:', allBids)
+
+            setBids(allBids)
+
+        } catch (err) {
+
+            console.error('❌ Bid loading error:', err)
+
+            setError(
+                err.response?.data?.error ||
+                err.message ||
+                'Failed to load bids'
+            )
+
+        } finally {
+
+            setIsLoadingBids(false)
+
+        }
+    }
 
     // ========================================
     // REFRESH BIDS
     // ========================================
 
     const fetchBids = async () => {
-
-        await fetchBidsForDashboard(
-            shipments
-        )
-
+        await fetchBidsForDashboard(shipments)
     }
-
 
     // ========================================
     // STAT CARD CLICK
     // ========================================
 
-    const handleFilterClick =
-        async (filter) => {
+    const handleFilterClick = async (filter) => {
 
-            setError('')
+        setError('')
 
-
-            if (
-                activeFilter === filter
-            ) {
-
-                setActiveFilter('all')
-
-                return
-
-            }
-
-
-            setActiveFilter(filter)
-
-
-            if (
-                filter === 'bids'
-            ) {
-
-                await fetchBids()
-
-            }
-
+        if (activeFilter === filter) {
+            setActiveFilter('all')
+            return
         }
 
+        setActiveFilter(filter)
+
+        if (filter === 'bids') {
+            await fetchBids()
+        }
+    }
 
     // ========================================
     // OPEN CANCEL MODAL
@@ -403,37 +279,27 @@ const Dashboard = () => {
     const handleDeleteShipment = (shipment) => {
 
         setError('')
-
         setShipmentToCancel(shipment)
-
     }
 
-
     // ========================================
-    // CONFIRM CANCEL / DELETE
+    // CONFIRM CANCEL
     // ========================================
 
     const confirmDeleteShipment = async () => {
 
-        if (!shipmentToCancel) {
-            return
-        }
-
+        if (!shipmentToCancel) return
 
         try {
 
             setIsCancelling(true)
-
             setError('')
-
 
             await api.delete(
                 `/shipments/${shipmentToCancel.id}`
             )
 
-
             setShipmentToCancel(null)
-
 
             await fetchShipments()
 
@@ -443,7 +309,6 @@ const Dashboard = () => {
                 'Delete shipment error:',
                 err
             )
-
 
             setError(
                 err.response?.data?.error ||
@@ -455,9 +320,7 @@ const Dashboard = () => {
             setIsCancelling(false)
 
         }
-
     }
-
 
     // ========================================
     // CLOSE CANCEL MODAL
@@ -465,14 +328,10 @@ const Dashboard = () => {
 
     const closeCancelModal = () => {
 
-        if (isCancelling) {
-            return
-        }
+        if (isCancelling) return
 
         setShipmentToCancel(null)
-
     }
-
 
     // ========================================
     // WAIT FOR USER
@@ -497,11 +356,8 @@ const Dashboard = () => {
                 </div>
 
             </div>
-
         )
-
     }
-
 
     // ========================================
     // LOADING
@@ -526,19 +382,14 @@ const Dashboard = () => {
                 </div>
 
             </div>
-
         )
-
     }
-
 
     // ========================================
     // STATISTICS
     // ========================================
 
-    const totalShipments =
-        shipments.length
-
+    const totalShipments = shipments.length
 
     // ========================================
     // SHIPPER STATISTICS
@@ -546,19 +397,15 @@ const Dashboard = () => {
 
     const inTransitShipments =
         shipments.filter(
-            (shipment) =>
-                shipment.status ===
-                'in_transit'
+            shipment =>
+                shipment.status === 'in_transit'
         ).length
-
 
     const deliveredShipments =
         shipments.filter(
-            (shipment) =>
-                shipment.status ===
-                'delivered'
+            shipment =>
+                shipment.status === 'delivered'
         ).length
-
 
     // ========================================
     // TRANSPORTER STATISTICS
@@ -566,330 +413,237 @@ const Dashboard = () => {
 
     const availableShipments =
         shipments.filter(
-            (shipment) =>
-                shipment.status ===
-                'posted'
+            shipment =>
+                shipment.status === 'posted'
         ).length
-
 
     const activeDeliveries =
         shipments.filter(
-            (shipment) =>
-
-                [
-                    'assigned',
-                    'in_transit'
-                ].includes(
+            shipment =>
+                ['assigned', 'in_transit'].includes(
                     shipment.status
-                )
-
-                &&
-
-                String(
-                    shipment.transporter_id
-                ) ===
-                String(
-                    user.id
-                )
-
+                ) &&
+                String(shipment.transporter_id) ===
+                String(user.id)
         ).length
-
 
     const completedDeliveries =
         shipments.filter(
-            (shipment) =>
-
-                shipment.status ===
-                'delivered'
-
-                &&
-
-                String(
-                    shipment.transporter_id
-                ) ===
-                String(
-                    user.id
-                )
-
+            shipment =>
+                shipment.status === 'delivered' &&
+                String(shipment.transporter_id) ===
+                String(user.id)
         ).length
 
-
-    const totalBids =
-        bids.length
-
+    const totalBids = bids.length
 
     // ========================================
     // FILTER SHIPMENTS
     // ========================================
 
     const filteredShipments =
-        shipments.filter(
-            (shipment) => {
+        shipments.filter(shipment => {
 
-                if (
-                    activeFilter ===
-                    'all'
-                ) {
-
-                    return true
-
-                }
-
-
-                if (
-                    activeFilter ===
-                    'in-transit'
-                ) {
-
-                    return (
-                        shipment.status ===
-                        'in_transit'
-                    )
-
-                }
-
-
-                if (
-                    activeFilter ===
-                    'delivered'
-                ) {
-
-                    return (
-                        shipment.status ===
-                        'delivered'
-                    )
-
-                }
-
-
-                if (
-                    activeFilter ===
-                    'available'
-                ) {
-
-                    return (
-                        shipment.status ===
-                        'posted'
-                    )
-
-                }
-
-
-                if (
-                    activeFilter ===
-                    'my-active'
-                ) {
-
-                    return (
-
-                        [
-                            'assigned',
-                            'in_transit'
-                        ].includes(
-                            shipment.status
-                        )
-
-                        &&
-
-                        String(
-                            shipment.transporter_id
-                        ) ===
-                        String(
-                            user.id
-                        )
-
-                    )
-
-                }
-
-
-                if (
-                    activeFilter ===
-                    'my-completed'
-                ) {
-
-                    return (
-
-                        shipment.status ===
-                        'delivered'
-
-                        &&
-
-                        String(
-                            shipment.transporter_id
-                        ) ===
-                        String(
-                            user.id
-                        )
-
-                    )
-
-                }
-
-
-                return false
-
+            if (activeFilter === 'all') {
+                return true
             }
-        )
 
+            if (activeFilter === 'in-transit') {
+                return shipment.status === 'in_transit'
+            }
+
+            if (activeFilter === 'delivered') {
+                return shipment.status === 'delivered'
+            }
+
+            if (activeFilter === 'available') {
+                return shipment.status === 'posted'
+            }
+
+            if (activeFilter === 'my-active') {
+
+                return (
+                    ['assigned', 'in_transit'].includes(
+                        shipment.status
+                    ) &&
+                    String(shipment.transporter_id) ===
+                    String(user.id)
+                )
+            }
+
+            if (activeFilter === 'my-completed') {
+
+                return (
+                    shipment.status === 'delivered' &&
+                    String(shipment.transporter_id) ===
+                    String(user.id)
+                )
+            }
+
+            return false
+        })
 
     // ========================================
     // STATUS CLASS
     // ========================================
 
-    const getStatusClass =
-        (status) => {
+    const getStatusClass = (status) => {
 
-            switch (status) {
+        switch (status) {
 
-                case 'posted':
-                    return 'open'
+            case 'posted':
+                return 'open'
 
-                case 'assigned':
-                    return 'assigned'
+            case 'assigned':
+                return 'assigned'
 
-                case 'in_transit':
-                    return 'in-transit'
+            case 'in_transit':
+                return 'in-transit'
 
-                case 'delivered':
-                    return 'completed'
+            case 'delivered':
+                return 'completed'
 
-                case 'cancelled':
-                    return 'cancelled'
+            case 'cancelled':
+                return 'cancelled'
 
-                default:
-                    return 'open'
-
-            }
-
+            default:
+                return 'open'
         }
-
+    }
 
     // ========================================
     // STATUS LABEL
     // ========================================
 
-    const getStatusLabel =
-        (status) => {
+    const getStatusLabel = (status) => {
 
-            switch (status) {
+        switch (status) {
 
-                case 'posted':
-                    return 'Posted'
+            case 'posted':
+                return 'Posted'
 
-                case 'assigned':
-                    return 'Assigned'
+            case 'assigned':
+                return 'Assigned'
 
-                case 'in_transit':
-                    return 'In Transit'
+            case 'in_transit':
+                return 'In Transit'
 
-                case 'delivered':
-                    return 'Delivered'
+            case 'delivered':
+                return 'Delivered'
 
-                case 'cancelled':
-                    return 'Cancelled'
+            case 'cancelled':
+                return 'Cancelled'
 
-                default:
-                    return status || 'Unknown'
-
-            }
-
+            default:
+                return status || 'Unknown'
         }
-
+    }
 
     // ========================================
     // SECTION TITLE
     // ========================================
 
-    const getSectionTitle =
-        () => {
+    const getSectionTitle = () => {
 
-            switch (activeFilter) {
+        switch (activeFilter) {
 
-                case 'in-transit':
-                    return 'In Transit'
+            case 'in-transit':
+                return 'In Transit'
 
-                case 'delivered':
-                    return 'Delivered Shipments'
+            case 'delivered':
+                return 'Delivered Shipments'
 
-                case 'available':
-                    return 'Available Shipments'
+            case 'available':
+                return 'Available Shipments'
 
-                case 'my-active':
-                    return 'My Active Deliveries'
+            case 'my-active':
+                return 'My Active Deliveries'
 
-                case 'my-completed':
-                    return 'Completed Deliveries'
+            case 'my-completed':
+                return 'Completed Deliveries'
 
-                case 'bids':
-                    return 'Bids Received'
+            case 'bids':
+                return 'Bids Received'
 
-                default:
+            default:
 
-                    return user.role ===
-                        'shipper'
-
-                        ? 'My Shipments'
-
-                        : 'Available Shipments'
-
-            }
-
+                return user.role === 'shipper'
+                    ? 'My Shipments'
+                    : 'Available Shipments'
         }
-
+    }
 
     // ========================================
     // SECTION DESCRIPTION
     // ========================================
 
-    const getSectionDescription =
-        () => {
+    const getSectionDescription = () => {
 
-            switch (activeFilter) {
+        switch (activeFilter) {
 
-                case 'in-transit':
+            case 'in-transit':
 
-                    return `${inTransitShipments} shipment${inTransitShipments !== 1 ? 's' : ''} currently in transit`
+                return `${inTransitShipments} shipment${
+                    inTransitShipments !== 1
+                        ? 's'
+                        : ''
+                } currently in transit`
 
+            case 'delivered':
 
-                case 'delivered':
+                return `${deliveredShipments} shipment${
+                    deliveredShipments !== 1
+                        ? 's'
+                        : ''
+                } delivered`
 
-                    return `${deliveredShipments} shipment${deliveredShipments !== 1 ? 's' : ''} delivered`
+            case 'available':
 
+                return `${availableShipments} shipment${
+                    availableShipments !== 1
+                        ? 's'
+                        : ''
+                } available`
 
-                case 'available':
+            case 'my-active':
 
-                    return `${availableShipments} shipment${availableShipments !== 1 ? 's' : ''} available`
+                return `${activeDeliveries} active deliver${
+                    activeDeliveries !== 1
+                        ? 'ies'
+                        : 'y'
+                }`
 
+            case 'my-completed':
 
-                case 'my-active':
+                return `${completedDeliveries} completed deliver${
+                    completedDeliveries !== 1
+                        ? 'ies'
+                        : 'y'
+                }`
 
-                    return `${activeDeliveries} active deliver${activeDeliveries !== 1 ? 'ies' : 'y'}`
+            case 'bids':
 
+                return `${totalBids} bid${
+                    totalBids !== 1
+                        ? 's'
+                        : ''
+                } received`
 
-                case 'my-completed':
+            default:
 
-                    return `${completedDeliveries} completed deliver${completedDeliveries !== 1 ? 'ies' : 'y'}`
-
-
-                case 'bids':
-
-                    return `${totalBids} bid${totalBids !== 1 ? 's' : ''} received`
-
-
-                default:
-
-                    return user.role ===
-                        'shipper'
-
-                        ? `You have posted ${totalShipments} shipment${totalShipments !== 1 ? 's' : ''} in total.`
-
-                        : `${availableShipments} shipment${availableShipments !== 1 ? 's are' : ' is'} currently available.`
-
-            }
-
+                return user.role === 'shipper'
+                    ? `You have posted ${totalShipments} shipment${
+                        totalShipments !== 1
+                            ? 's'
+                            : ''
+                    } in total.`
+                    : `${availableShipments} shipment${
+                        availableShipments !== 1
+                            ? 's are'
+                            : ' is'
+                    } currently available.`
         }
-
+    }
 
     // ========================================
     // RENDER
@@ -901,9 +655,7 @@ const Dashboard = () => {
 
             <Navbar />
 
-
             <main className="dashboard-main">
-
 
                 {/* ====================================
                     WELCOME
@@ -922,16 +674,11 @@ const Dashboard = () => {
                                 : 'there'}
                         </h1>
 
-
                         <p>
 
-                            {user.role ===
-                                'shipper'
-
+                            {user.role === 'shipper'
                                 ? 'Manage your shipments and bids'
-
                                 : 'Find shipments and manage your bids'
-
                             }
 
                         </p>
@@ -939,7 +686,6 @@ const Dashboard = () => {
                     </div>
 
                 </section>
-
 
                 {/* ====================================
                     ERROR
@@ -961,16 +707,13 @@ const Dashboard = () => {
 
                 )}
 
-
                 {/* ====================================
                     STATISTICS
                 ==================================== */}
 
                 <section className="stats-grid">
 
-
-                    {user.role ===
-                    'shipper' ? (
+                    {user.role === 'shipper' ? (
 
                         <>
 
@@ -980,16 +723,13 @@ const Dashboard = () => {
                                 type="button"
                                 className={
                                     `stat-card ${
-                                        activeFilter ===
-                                        'bids'
+                                        activeFilter === 'bids'
                                             ? 'stat-card-active'
                                             : ''
                                     }`
                                 }
                                 onClick={() =>
-                                    handleFilterClick(
-                                        'bids'
-                                    )
+                                    handleFilterClick('bids')
                                 }
                             >
 
@@ -1008,23 +748,19 @@ const Dashboard = () => {
 
                             </button>
 
-
                             {/* IN TRANSIT */}
 
                             <button
                                 type="button"
                                 className={
                                     `stat-card ${
-                                        activeFilter ===
-                                        'in-transit'
+                                        activeFilter === 'in-transit'
                                             ? 'stat-card-active'
                                             : ''
                                     }`
                                 }
                                 onClick={() =>
-                                    handleFilterClick(
-                                        'in-transit'
-                                    )
+                                    handleFilterClick('in-transit')
                                 }
                             >
 
@@ -1038,23 +774,19 @@ const Dashboard = () => {
 
                             </button>
 
-
                             {/* DELIVERED */}
 
                             <button
                                 type="button"
                                 className={
                                     `stat-card ${
-                                        activeFilter ===
-                                        'delivered'
+                                        activeFilter === 'delivered'
                                             ? 'stat-card-active'
                                             : ''
                                     }`
                                 }
                                 onClick={() =>
-                                    handleFilterClick(
-                                        'delivered'
-                                    )
+                                    handleFilterClick('delivered')
                                 }
                             >
 
@@ -1080,16 +812,13 @@ const Dashboard = () => {
                                 type="button"
                                 className={
                                     `stat-card ${
-                                        activeFilter ===
-                                        'available'
+                                        activeFilter === 'available'
                                             ? 'stat-card-active'
                                             : ''
                                     }`
                                 }
                                 onClick={() =>
-                                    handleFilterClick(
-                                        'available'
-                                    )
+                                    handleFilterClick('available')
                                 }
                             >
 
@@ -1103,23 +832,19 @@ const Dashboard = () => {
 
                             </button>
 
-
                             {/* ACTIVE */}
 
                             <button
                                 type="button"
                                 className={
                                     `stat-card ${
-                                        activeFilter ===
-                                        'my-active'
+                                        activeFilter === 'my-active'
                                             ? 'stat-card-active'
                                             : ''
                                     }`
                                 }
                                 onClick={() =>
-                                    handleFilterClick(
-                                        'my-active'
-                                    )
+                                    handleFilterClick('my-active')
                                 }
                             >
 
@@ -1133,23 +858,19 @@ const Dashboard = () => {
 
                             </button>
 
-
                             {/* BIDS */}
 
                             <button
                                 type="button"
                                 className={
                                     `stat-card ${
-                                        activeFilter ===
-                                        'bids'
+                                        activeFilter === 'bids'
                                             ? 'stat-card-active'
                                             : ''
                                     }`
                                 }
                                 onClick={() =>
-                                    handleFilterClick(
-                                        'bids'
-                                    )
+                                    handleFilterClick('bids')
                                 }
                             >
 
@@ -1168,23 +889,19 @@ const Dashboard = () => {
 
                             </button>
 
-
                             {/* COMPLETED */}
 
                             <button
                                 type="button"
                                 className={
                                     `stat-card ${
-                                        activeFilter ===
-                                        'my-completed'
+                                        activeFilter === 'my-completed'
                                             ? 'stat-card-active'
                                             : ''
                                     }`
                                 }
                                 onClick={() =>
-                                    handleFilterClick(
-                                        'my-completed'
-                                    )
+                                    handleFilterClick('my-completed')
                                 }
                             >
 
@@ -1204,12 +921,15 @@ const Dashboard = () => {
 
                 </section>
 
-
                 {/* ====================================
                     SHIPMENTS
                 ==================================== */}
 
                 <section className="shipments-section">
+
+                    {/* ====================================
+                        HEADER
+                    ==================================== */}
 
                     <div className="shipments-header">
 
@@ -1225,15 +945,36 @@ const Dashboard = () => {
 
                         </div>
 
-                    </div>
+                        {/* ====================================
+                            POST SHIPMENT BUTTON
+                            ONLY AFTER FIRST SHIPMENT
+                        ==================================== */}
 
+                        {user.role === 'shipper' &&
+                            shipments.length > 0 &&
+                            activeFilter === 'all' && (
+
+                            <button
+                                type="button"
+                                className="post-shipment-header-btn"
+                                onClick={() =>
+                                    navigate('/shipments/new')
+                                }
+                            >
+
+                                + Post Shipment
+
+                            </button>
+
+                        )}
+
+                    </div>
 
                     {/* ====================================
                         BIDS VIEW
                     ==================================== */}
 
-                    {activeFilter ===
-                    'bids' ? (
+                    {activeFilter === 'bids' ? (
 
                         <div>
 
@@ -1255,8 +996,7 @@ const Dashboard = () => {
 
                                 </div>
 
-                            ) : bids.length ===
-                              0 ? (
+                            ) : bids.length === 0 ? (
 
                                 <div className="empty-state">
 
@@ -1270,13 +1010,9 @@ const Dashboard = () => {
 
                                     <p>
 
-                                        {user.role ===
-                                            'shipper'
-
+                                        {user.role === 'shipper'
                                             ? 'No transporters have bid on your shipments yet.'
-
                                             : 'You have not placed any bids yet.'
-
                                         }
 
                                     </p>
@@ -1287,181 +1023,149 @@ const Dashboard = () => {
 
                                 <div className="bid-list">
 
-                                    {bids.map(
-                                        (bid) => (
+                                    {bids.map(bid => (
 
-                                            <div
-                                                className="shipment-card"
-                                                key={
-                                                    `${bid.id}-${bid.shipment_id}`
-                                                }
-                                            >
+                                        <div
+                                            className="shipment-card"
+                                            key={`${bid.id}-${bid.shipment_id}`}
+                                        >
 
-                                                <div className="shipment-route">
+                                            <div className="shipment-route">
 
-                                                    <div>
+                                                <div>
 
-                                                        <span className="location-label">
-                                                            FROM
-                                                        </span>
-
-                                                        <strong>
-                                                            {formatLocation(
-                                                                bid.from_city
-                                                            )}
-                                                        </strong>
-
-                                                    </div>
-
-
-                                                    <span className="route-arrow">
-                                                        →
+                                                    <span className="location-label">
+                                                        FROM
                                                     </span>
 
-
-                                                    <div>
-
-                                                        <span className="location-label">
-                                                            TO
-                                                        </span>
-
-                                                        <strong>
-                                                            {formatLocation(
-                                                                bid.to_city
-                                                            )}
-                                                        </strong>
-
-                                                    </div>
+                                                    <strong>
+                                                        {formatLocation(
+                                                            bid.from_city
+                                                        )}
+                                                    </strong>
 
                                                 </div>
 
+                                                <span className="route-arrow">
+                                                    →
+                                                </span>
 
-                                                <div className="shipment-details">
+                                                <div>
 
-                                                    <div>
+                                                    <span className="location-label">
+                                                        TO
+                                                    </span>
 
-                                                        <span>
-                                                            Bid Amount
-                                                        </span>
-
-                                                        <strong>
-
-                                                            ₹
-                                                            {Number(
-                                                                bid.amount ||
-                                                                0
-                                                            ).toLocaleString(
-                                                                'en-IN'
-                                                            )}
-
-                                                        </strong>
-
-                                                    </div>
-
-
-                                                    <div>
-
-                                                        <span>
-                                                            {
-                                                                user.role ===
-                                                                'shipper'
-
-                                                                    ? 'Transporter'
-                                                                    : 'Bidder'
-                                                            }
-                                                        </span>
-
-                                                        <strong>
-                                                            {
-                                                                bid.transporter_name ||
-                                                                'Transporter'
-                                                            }
-                                                        </strong>
-
-                                                    </div>
-
-
-                                                    <div>
-
-                                                        <span>
-                                                            Status
-                                                        </span>
-
-                                                        <span
-                                                            className={
-                                                                `shipment-status ${
-                                                                    bid.status ===
-                                                                    'accepted'
-
-                                                                        ? 'completed'
-
-                                                                        : bid.status ===
-                                                                          'rejected'
-
-                                                                            ? 'open'
-
-                                                                            : 'assigned'
-                                                                }`
-                                                            }
-                                                        >
-
-                                                            {
-                                                                bid.status ||
-                                                                'Pending'
-                                                            }
-
-                                                        </span>
-
-                                                    </div>
+                                                    <strong>
+                                                        {formatLocation(
+                                                            bid.to_city
+                                                        )}
+                                                    </strong>
 
                                                 </div>
-
-
-                                                {bid.note && (
-
-                                                    <div
-                                                        style={{
-                                                            padding:
-                                                                '12px 0',
-
-                                                            color:
-                                                                '#64748b',
-
-                                                            fontSize:
-                                                                '14px'
-                                                        }}
-                                                    >
-
-                                                        <strong>
-                                                            Message:
-                                                        </strong>
-
-                                                        {' '}
-
-                                                        {bid.note}
-
-                                                    </div>
-
-                                                )}
-
-
-                                                <button
-                                                    className="view-btn"
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/shipments/${bid.shipment_id}`
-                                                        )
-                                                    }
-                                                >
-
-                                                    View Shipment →
-
-                                                </button>
 
                                             </div>
 
-                                        )
-                                    )}
+                                            <div className="shipment-details">
+
+                                                <div>
+
+                                                    <span>
+                                                        Bid Amount
+                                                    </span>
+
+                                                    <strong>
+
+                                                        ₹
+                                                        {Number(
+                                                            bid.amount || 0
+                                                        ).toLocaleString('en-IN')}
+
+                                                    </strong>
+
+                                                </div>
+
+                                                <div>
+
+                                                    <span>
+                                                        {user.role === 'shipper'
+                                                            ? 'Transporter'
+                                                            : 'Bidder'
+                                                        }
+                                                    </span>
+
+                                                    <strong>
+                                                        {bid.transporter_name ||
+                                                            'Transporter'
+                                                        }
+                                                    </strong>
+
+                                                </div>
+
+                                                <div>
+
+                                                    <span>
+                                                        Status
+                                                    </span>
+
+                                                    <span
+                                                        className={
+                                                            `shipment-status ${
+                                                                bid.status === 'accepted'
+                                                                    ? 'completed'
+                                                                    : bid.status === 'rejected'
+                                                                        ? 'open'
+                                                                        : 'assigned'
+                                                            }`
+                                                        }
+                                                    >
+
+                                                        {bid.status || 'Pending'}
+
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                            {bid.note && (
+
+                                                <div
+                                                    style={{
+                                                        padding: '12px 0',
+                                                        color: '#64748b',
+                                                        fontSize: '14px'
+                                                    }}
+                                                >
+
+                                                    <strong>
+                                                        Message:
+                                                    </strong>
+
+                                                    {' '}
+
+                                                    {bid.note}
+
+                                                </div>
+
+                                            )}
+
+                                            <button
+                                                className="view-btn"
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/shipments/${bid.shipment_id}`
+                                                    )
+                                                }
+                                            >
+
+                                                View Shipment →
+
+                                            </button>
+
+                                        </div>
+
+                                    ))}
 
                                 </div>
 
@@ -1475,94 +1179,70 @@ const Dashboard = () => {
                             SHIPMENT VIEW
                         ==================================== */
 
-                        filteredShipments.length ===
-                        0 ? (
+                        filteredShipments.length === 0 ? (
 
-                            <div className="empty-state">
+                            <div
+                                className={
+                                    user.role === 'shipper' &&
+                                    shipments.length === 0 &&
+                                    activeFilter === 'all'
+                                        ? 'empty-state first-time-empty-state'
+                                        : 'empty-state'
+                                }
+                            >
 
                                 <div className="empty-icon">
 
-                                    {
-                                        activeFilter ===
-                                        'delivered'
-
-                                            ? '✅'
-
-                                            : activeFilter ===
-                                              'in-transit'
-
-                                                ? '🚚'
-
-                                                : activeFilter ===
-                                                  'available'
-
-                                                    ? '📦'
-
-                                                    : '📦'
+                                    {activeFilter === 'delivered'
+                                        ? '✅'
+                                        : activeFilter === 'in-transit'
+                                            ? '🚚'
+                                            : activeFilter === 'available'
+                                                ? '📦'
+                                                : '📦'
                                     }
 
                                 </div>
 
-
                                 <h3>
 
-                                    {
-                                        activeFilter ===
-                                        'in-transit'
-
-                                            ? 'No shipments in transit'
-
-                                            : activeFilter ===
-                                              'delivered'
-
-                                                ? 'No delivered shipments'
-
-                                                : activeFilter ===
-                                                  'available'
-
-                                                    ? 'No shipments available'
-
-                                                    : 'No shipments yet'
+                                    {activeFilter === 'in-transit'
+                                        ? 'No shipments in transit'
+                                        : activeFilter === 'delivered'
+                                            ? 'No delivered shipments'
+                                            : activeFilter === 'available'
+                                                ? 'No shipments available'
+                                                : 'No shipments yet'
                                     }
 
                                 </h3>
 
-
                                 <p>
 
-                                    {
-                                        activeFilter ===
-                                        'in-transit'
-
-                                            ? 'You currently have no shipments in transit.'
-
-                                            : activeFilter ===
-                                              'delivered'
-
-                                                ? 'You have no delivered shipments yet.'
-
-                                                : activeFilter ===
-                                                  'available'
-
-                                                    ? 'There are no shipments available right now.'
-
-                                                    : 'Create your first shipment to get started.'
+                                    {activeFilter === 'in-transit'
+                                        ? 'You currently have no shipments in transit.'
+                                        : activeFilter === 'delivered'
+                                            ? 'You have no delivered shipments yet.'
+                                            : activeFilter === 'available'
+                                                ? 'There are no shipments available right now.'
+                                                : 'Create your first shipment to get started.'
                                     }
 
                                 </p>
 
+                                {/* ====================================
+                                    FIRST-TIME SHIPPER BUTTON
+                                ==================================== */}
 
-                                {user.role ===
-                                    'shipper' &&
-                                    activeFilter ===
-                                    'all' && (
+                                {user.role === 'shipper' &&
+                                    shipments.length === 0 &&
+                                    activeFilter === 'all' && (
 
                                     <button
+                                        type="button"
                                         className="empty-post-btn"
                                         onClick={() =>
-                                            navigate(
-                                                '/shipments/new'
-                                            )
+                                            navigate('/shipments/new')
                                         }
                                     >
 
@@ -1578,181 +1258,159 @@ const Dashboard = () => {
 
                             <div className="shipment-list">
 
-                                {filteredShipments.map(
-                                    (shipment) => (
+                                {filteredShipments.map(shipment => (
 
-                                        <div
-                                            className="shipment-card"
-                                            key={
-                                                shipment.id
-                                            }
-                                        >
+                                    <div
+                                        className="shipment-card"
+                                        key={shipment.id}
+                                    >
 
-                                            {/* ROUTE */}
+                                        {/* ROUTE */}
 
-                                            <div className="shipment-route">
+                                        <div className="shipment-route">
 
-                                                <div>
+                                            <div>
 
-                                                    <span className="location-label">
-                                                        FROM
-                                                    </span>
-
-                                                    <strong>
-                                                        {formatLocation(
-                                                            shipment.from_city
-                                                        )}
-                                                    </strong>
-
-                                                </div>
-
-
-                                                <span className="route-arrow">
-                                                    →
+                                                <span className="location-label">
+                                                    FROM
                                                 </span>
 
-
-                                                <div>
-
-                                                    <span className="location-label">
-                                                        TO
-                                                    </span>
-
-                                                    <strong>
-                                                        {formatLocation(
-                                                            shipment.to_city
-                                                        )}
-                                                    </strong>
-
-                                                </div>
+                                                <strong>
+                                                    {formatLocation(
+                                                        shipment.from_city
+                                                    )}
+                                                </strong>
 
                                             </div>
 
+                                            <span className="route-arrow">
+                                                →
+                                            </span>
 
-                                            {/* DETAILS */}
+                                            <div>
 
-                                            <div className="shipment-details">
+                                                <span className="location-label">
+                                                    TO
+                                                </span>
 
-                                                {/* WEIGHT */}
-
-                                                <div>
-
-                                                    <span>
-                                                        Weight
-                                                    </span>
-
-                                                    <strong>
-                                                        {
-                                                            shipment.weight_kg
-                                                        } kg
-                                                    </strong>
-
-                                                </div>
-
-
-                                                {/* AMOUNT */}
-
-                                                <div>
-
-                                                    <span>
-                                                        Amount
-                                                    </span>
-
-                                                    <strong>
-
-                                                        ₹
-                                                        {Number(
-                                                            shipment.amount ||
-                                                            0
-                                                        ).toLocaleString(
-                                                            'en-IN'
-                                                        )}
-
-                                                    </strong>
-
-                                                </div>
-
-
-                                                {/* STATUS + CANCEL */}
-
-                                                <div className="status-container">
-
-                                                    <span className="status-label">
-                                                        Status
-                                                    </span>
-
-
-                                                    <div className="status-actions">
-
-                                                        <span
-                                                            className={
-                                                                `shipment-status ${
-                                                                    getStatusClass(
-                                                                        shipment.status
-                                                                    )
-                                                                }`
-                                                            }
-                                                        >
-
-                                                            {
-                                                                getStatusLabel(
-                                                                    shipment.status
-                                                                )
-                                                            }
-
-                                                        </span>
-
-
-                                                        {/* CANCEL ONLY POSTED SHIPMENTS */}
-
-                                                        {user.role ===
-                                                            'shipper' &&
-
-                                                            shipment.status ===
-                                                            'posted' && (
-
-                                                            <button
-                                                                type="button"
-                                                                className="cancel-btn"
-                                                                onClick={() =>
-                                                                    handleDeleteShipment(
-                                                                        shipment
-                                                                    )
-                                                                }
-                                                            >
-
-                                                                Cancel
-
-                                                            </button>
-
-                                                        )}
-
-                                                    </div>
-
-                                                </div>
+                                                <strong>
+                                                    {formatLocation(
+                                                        shipment.to_city
+                                                    )}
+                                                </strong>
 
                                             </div>
-
-
-                                            {/* VIEW */}
-
-                                            <button
-                                                className="view-btn"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/shipments/${shipment.id}`
-                                                    )
-                                                }
-                                            >
-
-                                                View →
-
-                                            </button>
 
                                         </div>
 
-                                    )
-                                )}
+                                        {/* DETAILS */}
+
+                                        <div className="shipment-details">
+
+                                            {/* WEIGHT */}
+
+                                            <div>
+
+                                                <span>
+                                                    Weight
+                                                </span>
+
+                                                <strong>
+                                                    {shipment.weight_kg} kg
+                                                </strong>
+
+                                            </div>
+
+                                            {/* AMOUNT */}
+
+                                            <div>
+
+                                                <span>
+                                                    Amount
+                                                </span>
+
+                                                <strong>
+
+                                                    ₹
+                                                    {Number(
+                                                        shipment.amount || 0
+                                                    ).toLocaleString('en-IN')}
+
+                                                </strong>
+
+                                            </div>
+
+                                            {/* STATUS */}
+
+                                            <div className="status-container">
+
+                                                <span className="status-label">
+                                                    Status
+                                                </span>
+
+                                                <div className="status-actions">
+
+                                                    <span
+                                                        className={
+                                                            `shipment-status ${
+                                                                getStatusClass(
+                                                                    shipment.status
+                                                                )
+                                                            }`
+                                                        }
+                                                    >
+
+                                                        {getStatusLabel(
+                                                            shipment.status
+                                                        )}
+
+                                                    </span>
+
+                                                    {/* CANCEL */}
+
+                                                    {user.role === 'shipper' &&
+                                                        shipment.status === 'posted' && (
+
+                                                        <button
+                                                            type="button"
+                                                            className="cancel-btn"
+                                                            onClick={() =>
+                                                                handleDeleteShipment(
+                                                                    shipment
+                                                                )
+                                                            }
+                                                        >
+
+                                                            Cancel
+
+                                                        </button>
+
+                                                    )}
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        {/* VIEW */}
+
+                                        <button
+                                            className="view-btn"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/shipments/${shipment.id}`
+                                                )
+                                            }
+                                        >
+
+                                            View →
+
+                                        </button>
+
+                                    </div>
+
+                                ))}
 
                             </div>
 
@@ -1763,7 +1421,6 @@ const Dashboard = () => {
                 </section>
 
             </main>
-
 
             {/* =========================================
                 CANCEL CONFIRMATION MODAL
@@ -1778,26 +1435,18 @@ const Dashboard = () => {
 
                     <div
                         className="cancel-modal"
-                        onClick={(event) =>
+                        onClick={event =>
                             event.stopPropagation()
                         }
                     >
-
-                        {/* WARNING ICON */}
 
                         <div className="cancel-icon">
                             !
                         </div>
 
-
-                        {/* HEADING */}
-
                         <h3>
                             Cancel shipment?
                         </h3>
-
-
-                        {/* DESCRIPTION */}
 
                         <p>
 
@@ -1821,43 +1470,28 @@ const Dashboard = () => {
 
                         </p>
 
-
-                        {/* WARNING */}
-
                         <span className="cancel-warning">
                             This action cannot be undone.
                         </span>
-
-
-                        {/* ACTIONS */}
 
                         <div className="modal-actions">
 
                             <button
                                 type="button"
                                 className="keep-shipment-btn"
-                                onClick={
-                                    closeCancelModal
-                                }
-                                disabled={
-                                    isCancelling
-                                }
+                                onClick={closeCancelModal}
+                                disabled={isCancelling}
                             >
 
                                 Keep Shipment
 
                             </button>
 
-
                             <button
                                 type="button"
                                 className="confirm-cancel-btn"
-                                onClick={
-                                    confirmDeleteShipment
-                                }
-                                disabled={
-                                    isCancelling
-                                }
+                                onClick={confirmDeleteShipment}
+                                disabled={isCancelling}
                             >
 
                                 {isCancelling
@@ -1876,10 +1510,7 @@ const Dashboard = () => {
             )}
 
         </div>
-
     )
-
 }
-
 
 export default Dashboard

@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/riyakatiyar/Desktop/smartfreight/client/src/pages/shivam-portfolio/src",
+      "program": "/Users/riyakatiyar/Desktop/smartfreight/client/src/pages/shivam-portfolio/src/build/Debug/outDebug"
+    }
+  ]
+}
