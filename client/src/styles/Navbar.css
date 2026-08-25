@@ -12,8 +12,10 @@
 
   border-bottom: 1px solid #e1e5e1;
 
-  position: relative;
-  z-index: 10;
+  /* STICKY NAVBAR */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 
   box-sizing: border-box;
 }
@@ -187,6 +189,11 @@
     flex-wrap: wrap;
 
     background: #f7f9f7;
+
+    /* Keep sticky on mobile */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
   }
 
 
